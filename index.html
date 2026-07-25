@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlebC TORUS - Tele Operated Robotic Ultrasound System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+</head>
+
+<body>
+  <div id="role-selection-screen" class="role-selection-screen">
+    <div class="role-selection-container">
+      <div class="startup-logo-wrapper">
+        <img src="logo.png" alt="PlebC Logo" class="startup-logo">
+      </div>
+      <h1 class="startup-title">TORUS</h1>
+      <p class="startup-subtitle">Remote Ultrasound System</p>
+      <p class="startup-platform">Next-Generation Healthcare Robotics Platform</p>
+      <div class="role-cards-grid">
+        <div class="role-card-item" data-role="doctor" data-uid="3001">
+          <div class="role-icon">👨‍⚕️</div>
+          <h3 class="role-name">Doctor</h3>
+          <p class="role-uid-label">UID: 3001</p>
+        </div>
+        <div class="role-card-item" data-role="patient" data-uid="4001">
+          <div class="role-icon">🧑</div>
+          <h3 class="role-name">Patient</h3>
+          <p class="role-uid-label">UID: 4001</p>
+        </div>
+        <div class="role-card-item" data-role="viewer" data-uid="6001">
+          <div class="role-icon">👁️</div>
+          <h3 class="role-name">Viewer</h3>
+          <p class="role-uid-label">UID: 6001</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="app" id="app-dashboard" style="display: none;">
+    <header class="app-header">
+      <div class="header-left">
+        <img src="logo.png" alt="PlebC Logo" class="header-logo">
+      </div>
+      <div class="header-center">
+        <h1 class="hero-title">TORUS</h1>
+        <h2 class="hero-system">Remote Ultrasound System</h2>
+        <p class="hero-platform">Next-Generation Healthcare Robotics Platform</p>
+      </div>
+      <div class="header-right">
+        <div class="header-row">
+          <button id="settingsBtn" class="header-btn" title="Agora Settings" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
+            </svg>
+            <span>Settings</span>
+          </button>
+          <button id="profileBtn" class="header-btn" title="User Profile" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>User Profile</span>
+          </button>
+        </div>
+        <div class="header-row">
+          <button id="backBtn" class="header-btn btn-back" title="Go Back to Role Selection" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          <div id="status" class="status-pill disconnected">
+            <span class="status-indicator"></span>
+            <span class="status-text">Disconnected</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="controls">
+      <div class="button-row">
+        <button id="joinBtn" class="btn btn-primary" type="button">Join Call</button>
+        <button id="muteBtn" class="btn btn-mute" type="button" disabled style="display: none;">Mute Mic</button>
+        <button id="leaveBtn" class="btn btn-secondary" type="button" disabled>Leave</button>
+      </div>
+    </section>
+
+    <!-- Settings Modal Popup -->
+    <div id="settingsModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Agora Connection Settings</h2>
+          <button id="closeModalBtn" class="close-modal-btn" type="button" title="Close Modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="controls-grid">
+            <label>
+              <span>App ID</span>
+              <input id="appId" type="text" placeholder="Enter Agora App ID" value="02ca7a77ff2240e292eb99c39ad0ffea" />
+            </label>
+
+            <label>
+              <span>Channel</span>
+              <input id="channel" type="text" value="test" />
+            </label>
+
+            <label>
+              <span>Role</span>
+              <select id="role">
+                <option value="doctor">Doctor (Consultant)</option>
+                <option value="patient" selected>Patient/Clinic (Ultrasound Source)</option>
+                <option value="viewer">Viewer (Consultant/Observer)</option>
+              </select>
+            </label>
+
+            <label id="feed-type-container">
+              <span>Ultrasound Source</span>
+              <select id="feedType">
+                <option value="webcam">Live Feed (USB Camera/Capture Card)</option>
+                <option value="screen">Window Capture (Screen Share)</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Token (optional)</span>
+              <input id="token" type="text" placeholder="RTC Token"
+                value="007eJxTYJCS3vorlT/X9hz3/XSzEKO8sgJn3iy+e/JyHQFq+aIiqQoMhmZJqRZm5gbmhpamJimplhamlqaGKSbJFsZAmRRTs/MHU7IaAhkZ2Bz0WBkZIBDEZ2EoSS0uYWAAALjTGaw=" />
+            </label>
+
+            <label>
+              <span>UID (optional)</span>
+              <input id="uid" type="number" min="0" placeholder="Auto" readonly />
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelSettingsBtn" class="btn btn-secondary" type="button">Cancel</button>
+          <button id="saveSettingsBtn" class="btn btn-primary" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-body">
+      <section id="videos-grid" class="videos-grid">
+        <div class="video-card" id="local-card">
+          <div class="video-header">
+            <h2>📹 Local Feed</h2>
+            <div class="video-controls">
+              <button class="control-btn toggle-btn camera-btn active" id="local-camera-btn" type="button"
+                title="Toggle Camera" disabled>
+                <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 7l-7 5 7 5V7z"></path>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+                <svg class="icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10l-2.58-1.84M23 7l-7 5 7 5V7z">
+                  </path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+              <button class="control-btn toggle-btn mic-btn active" id="local-mic-btn" type="button"
+                title="Toggle Microphone" disabled>
+                <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+                <svg class="icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                  <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                  <path d="M17 11a5 5 0 0 1-5 5m-3.87-1.17A7 7 0 0 1 5 10v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+              </button>
+              <button class="control-btn zoom-out-btn" id="local-zoom-out-btn" type="button" title="Zoom Out">-</button>
+              <button class="control-btn zoom-in-btn" id="local-zoom-in-btn" type="button" title="Zoom In">+</button>
+              <button class="control-btn fit-btn" id="local-fit-btn" type="button" title="Toggle Fit/Fill">Fit</button>
+              <button class="control-btn pin-btn" id="local-pin-btn" type="button" title="Focus Feed">Focus</button>
+            </div>
+          </div>
+          <div id="local-player" class="player"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Picture-in-Picture floating self-view (additional self-preview) -->
+  <div id="floating-self-view" class="floating-self-view">
+    <div class="self-view-header">
+      <span class="self-view-label">Self View</span>
+      <div class="self-view-controls">
+        <button class="self-view-btn self-view-cam-btn" id="self-view-cam-btn" title="Toggle Camera" type="button">
+          <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 7l-7 5 7 5V7z"></path>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+          </svg>
+          <svg class="icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10l-2.58-1.84M23 7l-7 5 7 5V7z">
+            </path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+        <button class="self-view-btn self-view-mic-btn" id="self-view-mic-btn" title="Toggle Microphone" type="button">
+          <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+          <svg class="icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+            <path d="M17 11a5 5 0 0 1-5 5m-3.87-1.17A7 7 0 0 1 5 10v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </button>
+        <button class="self-view-btn self-view-minimize-btn" id="self-view-minimize-btn" title="Minimize Self View"
+          type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <button class="self-view-btn self-view-close-btn" id="self-view-close-btn" title="Close Self View"
+          type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="self-view-body">
+      <canvas id="self-view-canvas" class="self-view-canvas"></canvas>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
