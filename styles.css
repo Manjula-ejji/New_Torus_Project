@@ -1,30 +1,27 @@
 :root {
-  --bg-main: #060B18; /* Deep Medical Navy */
-  --bg-surface: #0E1628; /* Secondary Surface */
-  --bg-card: #111B31; /* Card Background */
-  --bg-control: rgba(14, 22, 40, 0.75);
+  --bg-main: #090B18;
+  --bg-card: rgba(20, 22, 42, 0.45);
+  --bg-control: rgba(20, 22, 42, 0.7);
   --border-color: rgba(255, 255, 255, 0.08);
-  --border-active: #00C8FF; /* Primary Accent / Medical Cyan */
-  --text-main: #FFFFFF; /* Text Primary */
-  --text-muted: #B7C5D8; /* Text Secondary */
-  --accent: #00C8FF; /* Primary Accent */
-  --accent-hover: #4FD1FF; /* Secondary Accent */
-  --accent-highlight: #7EE8FF; /* Highlight */
-  --accent-blue: #38BDF8; /* Medical Blue */
-  --accent-cyan: #00C8FF;
-  --danger: #FF5C7A; /* Error */
-  --danger-hover: #e04a66;
-  --success: #00D084; /* Success */
-  --warning: #FFC857; /* Warning */
-  
-  --shadow-lg: 
-    0 10px 30px rgba(0, 0, 0, 0.35),
-    0 0 40px rgba(0, 200, 255, 0.12),
+  --border-active: #8B5CF6;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --accent: #8B5CF6;
+  --accent-hover: #a78bfa;
+  --accent-blue: #38BDF8;
+  --accent-cyan: #22D3EE;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --success: #10b981;
+  --shadow-lg:
+    0 20px 40px -5px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(139, 92, 246, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  
+  --font-sans: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+
+  /* Additional Premium Shadows */
   --shadow-inner-glow: inset 0 2px 4px rgba(255, 255, 255, 0.08), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-button-glow: 0 4px 14px rgba(0, 200, 255, 0.35), 0 0 10px rgba(79, 209, 255, 0.2);
+  --shadow-button-glow: 0 4px 14px rgba(139, 92, 246, 0.4), 0 0 10px rgba(56, 189, 248, 0.2);
 }
 
 * {
@@ -36,11 +33,11 @@
 body {
   background: var(--bg-main);
   /* Layered Background: Radial glow behind title, ambient corner glows, linear color fade */
-  background-image: 
-    radial-gradient(circle at 50% 20%, rgba(0, 200, 255, 0.16) 0%, transparent 60%),
-    radial-gradient(circle at 0% 0%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.06) 0%, transparent 45%),
-    linear-gradient(180deg, #060B18 0%, #03050b 100%);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #090B18 0%, #05060f 100%);
   color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
@@ -58,22 +55,16 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.008) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, transparent 1px);
   background-size: 35px 35px;
   background-position: center center;
   z-index: -2;
   pointer-events: none;
-  animation: grid-pulse 10s ease-in-out infinite alternate;
 }
 
-@keyframes grid-pulse {
-  0% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-/* Soft Vignette and Noise Overlay */
+/* Soft Vignette Overlay */
 body::after {
   content: '';
   position: fixed;
@@ -81,9 +72,7 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle, transparent 55%, rgba(3, 5, 11, 0.5) 100%),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.012'/%3E%3C/svg%3E");
+  background: radial-gradient(circle, transparent 60%, rgba(5, 6, 15, 0.35) 100%);
   z-index: -1;
   pointer-events: none;
 }
@@ -111,7 +100,7 @@ body::after {
   -webkit-backdrop-filter: blur(28px) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 20px rgba(139, 92, 246, 0.03);
@@ -142,16 +131,19 @@ body::after {
 .header-logo:hover {
   border-color: rgba(139, 92, 246, 0.3);
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 
+  box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 0 25px rgba(139, 92, 246, 0.3);
 }
 
 @keyframes logo-float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-3px);
   }
@@ -180,32 +172,35 @@ body::after {
   background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
-          drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
   animation: title-glow-breath 4.5s ease-in-out infinite, shimmer-sweep 14s ease-in-out infinite;
 }
 
 @keyframes title-glow-breath {
-  0%, 100% {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
-            drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
+
+  0%,
+  100% {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
   }
+
   50% {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
-            drop-shadow(0 0 22px rgba(139, 92, 246, 0.28));
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 22px rgba(139, 92, 246, 0.28));
   }
 }
 
 @keyframes logo-glow-breath {
-  0%, 100% {
-    box-shadow: 
+
+  0%,
+  100% {
+    box-shadow:
       0 10px 30px rgba(0, 0, 0, 0.25),
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       0 0 12px rgba(139, 92, 246, 0.06);
     border-color: rgba(255, 255, 255, 0.08);
   }
+
   50% {
-    box-shadow: 
+    box-shadow:
       0 10px 30px rgba(0, 0, 0, 0.25),
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       0 0 22px rgba(139, 92, 246, 0.22);
@@ -217,9 +212,11 @@ body::after {
   0% {
     background-position: 150% center;
   }
+
   15% {
     background-position: -150% center;
   }
+
   100% {
     background-position: -150% center;
   }
@@ -307,7 +304,7 @@ body::after {
   background: var(--accent);
   border-color: var(--accent);
   color: #ffffff;
-  box-shadow: 
+  box-shadow:
     0 8px 20px rgba(139, 92, 246, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-2px) scale(1.03);
@@ -346,7 +343,7 @@ body::after {
   border-radius: 99px;
   backdrop-filter: blur(32px) saturate(120%);
   -webkit-backdrop-filter: blur(32px) saturate(120%);
-  box-shadow: 
+  box-shadow:
     0 24px 50px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.15),
     0 0 30px rgba(139, 92, 246, 0.05);
@@ -355,7 +352,7 @@ body::after {
 
 .controls:hover {
   border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 
+  box-shadow:
     0 28px 60px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     0 0 40px rgba(139, 92, 246, 0.1);
@@ -381,8 +378,8 @@ body::after {
 #joinBtn:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent-cyan) 100%);
   transform: translateY(-2.5px) scale(1.04);
-  box-shadow: 
-    0 8px 24px rgba(139, 92, 246, 0.5), 
+  box-shadow:
+    0 8px 24px rgba(139, 92, 246, 0.5),
     0 0 20px rgba(56, 189, 248, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
@@ -402,8 +399,8 @@ body::after {
   border-color: rgba(239, 68, 68, 0.4);
   color: #fca5a5;
   transform: translateY(-2.5px) scale(1.04);
-  box-shadow: 
-    0 8px 20px rgba(239, 68, 68, 0.25), 
+  box-shadow:
+    0 8px 20px rgba(239, 68, 68, 0.25),
     0 0 15px rgba(239, 68, 68, 0.15);
 }
 
@@ -435,8 +432,8 @@ body::after {
 .btn-primary:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent-cyan) 100%);
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 
-    0 10px 25px rgba(139, 92, 246, 0.5), 
+  box-shadow:
+    0 10px 25px rgba(139, 92, 246, 0.5),
     0 0 18px rgba(56, 189, 248, 0.3);
 }
 
@@ -484,7 +481,7 @@ body::after {
   text-transform: uppercase;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
@@ -557,10 +554,12 @@ body::after {
     transform: scale(0.9);
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
   }
+
   70% {
     transform: scale(1.1);
     box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
   }
+
   100% {
     transform: scale(0.9);
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
@@ -572,10 +571,12 @@ body::after {
     transform: scale(0.9);
     box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6);
   }
+
   70% {
     transform: scale(1.1);
     box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
   }
+
   100% {
     transform: scale(0.9);
     box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
@@ -595,9 +596,10 @@ body::after {
 .video-card {
   background: linear-gradient(135deg, rgba(20, 22, 42, 0.45) 0%, rgba(13, 15, 30, 0.65) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 26px; /* Rounded 26px corners as requested */
+  border-radius: 26px;
+  /* Rounded 26px corners as requested */
   padding: 24px;
-  box-shadow: 
+  box-shadow:
     0 16px 36px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   display: flex;
@@ -639,7 +641,7 @@ body::after {
 .video-card:hover {
   transform: translateY(-4px) scale(1.008);
   border-color: rgba(139, 92, 246, 0.3);
-  box-shadow: 
+  box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.6),
     0 0 25px rgba(139, 92, 246, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -648,7 +650,7 @@ body::after {
 .video-card.pinned {
   grid-column: 1 / -1;
   border-color: rgba(139, 92, 246, 0.5);
-  box-shadow: 
+  box-shadow:
     0 0 35px rgba(139, 92, 246, 0.2),
     0 24px 50px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -813,7 +815,7 @@ select {
 input:focus,
 select:focus {
   border-color: var(--accent);
-  box-shadow: 
+  box-shadow:
     0 0 0 3px rgba(139, 92, 246, 0.25),
     inset 0 2px 4px rgba(0, 0, 0, 0.15);
   background: rgba(9, 11, 24, 0.85);
@@ -856,10 +858,11 @@ select {
 .modal-content {
   background: rgba(20, 22, 42, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 26px; /* 26px rounded corners */
+  border-radius: 26px;
+  /* 26px rounded corners */
   width: 95%;
   max-width: 580px;
-  box-shadow: 
+  box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.7),
     0 0 35px rgba(139, 92, 246, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -1034,7 +1037,7 @@ select {
   width: 100vw;
   height: 100vh;
   background: var(--bg-main);
-  background-image: 
+  background-image:
     radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.18) 0%, transparent 65%),
     radial-gradient(circle at 50% 0%, #120e29 0%, var(--bg-main) 70%);
   display: flex;
@@ -1050,6 +1053,7 @@ select {
     opacity: 0;
     backdrop-filter: blur(0);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(12px);
@@ -1081,7 +1085,7 @@ select {
 }
 
 .startup-logo-wrapper {
-  margin-bottom: 36px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1091,7 +1095,7 @@ select {
   width: 170px;
   height: auto;
   object-fit: contain;
-  background: rgba(18, 28, 48, 0.5);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 8px 18px;
@@ -1101,54 +1105,38 @@ select {
 
 .startup-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 64px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  margin: 0 0 12px 0;
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  margin: 0 0 10px 0;
   line-height: 1.1;
-  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  background: linear-gradient(90deg, #ffffff 0%, #ffffff 40%, #f8fafc 48%, #ffffff 50%, #cbd5e1 75%, #94a3b8 100%);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45))
-          drop-shadow(0 0 12px rgba(0, 200, 255, 0.12));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
   animation: title-glow-breath 4.5s ease-in-out infinite, shimmer-sweep 14s ease-in-out infinite;
 }
 
 .startup-subtitle {
   font-family: 'Poppins', sans-serif;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
-  color: #00C8FF;
+  color: #38BDF8;
   text-transform: uppercase;
-  letter-spacing: 6px;
-  margin: 0 0 18px 0;
+  letter-spacing: 4px;
+  margin: 0 0 10px 0;
   line-height: 1.2;
-  display: inline-block;
-  position: relative;
-  padding-bottom: 8px;
-}
-
-.startup-subtitle::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 2px;
-  background: #00C8FF;
-  box-shadow: 0 0 8px #00C8FF;
-  border-radius: 99px;
 }
 
 .startup-platform {
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 13px;
   font-weight: 500;
-  color: #B7C5D8;
-  letter-spacing: 1px;
+  color: #94A3B8;
+  letter-spacing: 1.2px;
   margin: 0 0 45px 0;
-  line-height: 1.4;
+  line-height: 1.2;
   opacity: 0.85;
 }
 
@@ -1161,23 +1149,22 @@ select {
 
 /* Role Selection Cards */
 .role-card-item {
-  background: rgba(18, 28, 48, 0.72) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 24px !important; /* Rounded 24px corners */
-  padding: 44px 28px;
+  background: linear-gradient(135deg, rgba(20, 22, 42, 0.45) 0%, rgba(13, 15, 30, 0.65) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 26px;
+  /* Rounded 26px corners as requested */
+  padding: 42px 28px;
   cursor: pointer;
-  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1) !important; /* Smooth 350ms */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px; /* Increased spacing */
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  /* Multiple layered shadows */
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.35),
-    0 0 40px rgba(0, 200, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  gap: 20px;
+  backdrop-filter: blur(24px) saturate(110%);
+  -webkit-backdrop-filter: blur(24px) saturate(110%);
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -1185,93 +1172,92 @@ select {
 .role-card-item::before {
   content: '';
   position: absolute;
-  top: -150%;
-  left: -150%;
-  width: 300%;
-  height: 300%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
   pointer-events: none;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 2;
 }
 
 .role-card-item:hover {
-  transform: translateY(-10px) scale(1.03) !important; /* Lift 10px, scale 1.03 */
-  border-color: rgba(0, 200, 255, 0.35) !important; /* Border glows cyan */
-  background: rgba(22, 34, 58, 0.8) !important; /* Background slightly brighter */
-  box-shadow: 
-    0 20px 45px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(0, 200, 255, 0.22), /* Shadow glow expands */
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(139, 92, 246, 0.35);
+  background: linear-gradient(135deg, rgba(20, 22, 42, 0.6) 0%, rgba(139, 92, 246, 0.04) 100%);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(139, 92, 246, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.role-card-item:hover::before {
-  top: -50%;
-  left: -50%;
-}
-
-/* circular icon holders */
+/* Icon Area with Frosted Circular Glass + Gradient Ring */
 .role-icon {
-  width: 92px;
-  height: 92px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(14, 22, 40, 0.8) 0%, rgba(6, 11, 24, 0.95) 100%) !important;
-  border: 1.5px solid rgba(0, 200, 255, 0.25) !important; /* Ambient blue/cyan ring */
-  outline: 1px solid rgba(139, 92, 246, 0.18) !important; /* Subtle purple outline */
-  outline-offset: -4px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 38px;
   margin-bottom: 8px;
   position: relative;
-  box-shadow: 
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    inset 0 0 15px rgba(0, 200, 255, 0.15), /* Inner glow */
-    inset 0 2px 5px rgba(255, 255, 255, 0.08),
-    0 0 20px rgba(0, 200, 255, 0.08); /* Outer glow */
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 3;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    inset 0 2px 8px rgba(255, 255, 255, 0.05),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(139, 92, 246, 0.08);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .role-icon::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(56, 189, 248, 0.1) 40%, rgba(34, 211, 238, 0.4));
+  z-index: -1;
+  opacity: 0.6;
+  transition: all 0.4s ease;
+}
+
+.role-icon-img {
+  width: 72%;
+  height: 72%;
+  object-fit: contain;
   pointer-events: none;
-  z-index: 2;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
 }
 
 .role-card-item:hover .role-icon {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.45),
+    inset 0 2px 10px rgba(255, 255, 255, 0.1),
+    inset 0 -2px 10px rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(139, 92, 246, 0.3);
+}
+
+.role-card-item:hover .role-icon-img {
   transform: scale(1.05);
-  border-color: rgba(0, 200, 255, 0.5) !important;
-  box-shadow: 
-    0 12px 32px rgba(0, 0, 0, 0.5),
-    inset 0 0 22px rgba(0, 200, 255, 0.25),
-    0 0 30px rgba(0, 200, 255, 0.3);
 }
 
-.medical-svg {
-  width: 38px;
-  height: 38px;
-  color: #00C8FF; /* Cyan */
-  filter: drop-shadow(0 0 6px rgba(0, 200, 255, 0.4));
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 3;
-}
-
-.role-card-item:hover .medical-svg {
-  color: #7EE8FF; /* Shifting to Highlight Cyan */
-  filter: drop-shadow(0 0 10px rgba(0, 200, 255, 0.8));
+.role-card-item:hover .role-icon::after {
+  opacity: 1;
+  transform: rotate(45deg);
 }
 
 .role-name {
   font-family: 'Poppins', sans-serif;
-  font-size: 32px !important; /* Card title 32px-36px */
+  font-size: 21px;
   font-weight: 700;
   color: #ffffff;
   margin: 0;
@@ -1281,44 +1267,28 @@ select {
 /* Frosted Glass Pill UID Badges */
 .role-uid-label {
   font-family: 'Inter', sans-serif;
-  font-size: 18px !important; /* UID 18px */
+  font-size: 13px;
   font-weight: 600;
-  color: #00C8FF !important; /* Medical Cyan */
-  background: rgba(0, 200, 255, 0.06) !important; /* Glass badge */
-  border: 1px solid rgba(0, 200, 255, 0.22) !important; /* Medical cyan border */
-  padding: 6px 18px;
+  color: var(--accent-blue);
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  padding: 6px 14px;
   border-radius: 99px;
-  letter-spacing: 1.5px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.25),
-    0 0 12px rgba(0, 200, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  letter-spacing: 1px;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.2),
+    0 0 10px rgba(56, 189, 248, 0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Tiny AI Chip Icon inside the badge using ::before pseudo-element */
-.role-uid-label::before {
-  content: '';
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300C8FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='4' width='16' height='16' rx='2'/%3E%3Cpath d='M9 9h6v6H9zM9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
+  transition: all 0.3s ease;
 }
 
 .role-card-item:hover .role-uid-label {
-  background: rgba(0, 200, 255, 0.14) !important;
-  border-color: rgba(0, 200, 255, 0.45) !important;
-  box-shadow: 
-    0 6px 16px rgba(0, 0, 0, 0.35),
-    0 0 18px rgba(0, 200, 255, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(56, 189, 248, 0.15);
 }
 
 @media (max-width: 768px) {
@@ -1347,14 +1317,14 @@ select {
   overflow: hidden;
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
-  box-shadow: 
+  box-shadow:
     0 24px 50px rgba(0, 0, 0, 0.65),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   display: flex;
   flex-direction: column;
   opacity: 0;
   pointer-events: none;
-  transition: 
+  transition:
     transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.25s ease,
     height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
