@@ -32,13 +32,31 @@
 
 body {
   background: var(--bg-main);
-  /* Layered Background: Radial glow behind title, ambient corner glows, linear color fade */
+  /* Layered Background: Radial glow behind title, ambient corner glows, linear color fade, and soft particle field */
   background-image: 
     radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.22) 0%, transparent 55%),
     radial-gradient(circle at 0% 0%, rgba(34, 211, 238, 0.12) 0%, transparent 40%),
     radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
     radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.08) 0%, transparent 45%),
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(180deg, #090B18 0%, #05060f 100%);
+  background-size: 
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    140px 140px,
+    220px 220px,
+    100% 100%;
+  background-position: 
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    30px 40px,
+    90px 130px,
+    0 0;
   color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
