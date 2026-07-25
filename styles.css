@@ -1269,26 +1269,26 @@ select {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent-blue);
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.22);
+  color: #0084FF;
+  background: rgba(0, 132, 255, 0.08);
+  border: 1px solid rgba(0, 132, 255, 0.25);
   padding: 6px 14px;
   border-radius: 99px;
   letter-spacing: 1px;
   box-shadow:
     0 4px 10px rgba(0, 0, 0, 0.2),
-    0 0 10px rgba(56, 189, 248, 0.05);
+    0 0 12px rgba(0, 132, 255, 0.15);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s ease;
 }
 
 .role-card-item:hover .role-uid-label {
-  background: rgba(56, 189, 248, 0.15);
-  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(0, 132, 255, 0.15);
+  border-color: rgba(0, 132, 255, 0.45);
   box-shadow:
     0 6px 14px rgba(0, 0, 0, 0.3),
-    0 0 15px rgba(56, 189, 248, 0.15);
+    0 0 18px rgba(0, 132, 255, 0.3);
 }
 
 @media (max-width: 768px) {
