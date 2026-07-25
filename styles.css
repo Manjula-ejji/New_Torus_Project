@@ -123,22 +123,18 @@ body::after {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 6px 14px;
-  box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 20px rgba(56, 189, 248, 0.06);
   display: block;
-  animation: logo-float 5s ease-in-out infinite;
+  animation: logo-float 5s ease-in-out infinite, logo-glow-breath 4.5s ease-in-out infinite;
   transition: all 0.3s ease;
 }
 
 .header-logo:hover {
-  border-color: rgba(56, 189, 248, 0.3);
+  border-color: rgba(139, 92, 246, 0.3);
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 
     0 6px 20px rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 25px rgba(56, 189, 248, 0.15);
+    0 0 25px rgba(139, 92, 246, 0.3);
 }
 
 @keyframes logo-float {
@@ -155,7 +151,7 @@ body::after {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background-image: radial-gradient(circle at center, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  background-image: radial-gradient(circle at center, rgba(139, 92, 246, 0.16) 0%, transparent 70%);
   padding: 6px 20px;
   border-radius: 99px;
 }
@@ -166,20 +162,55 @@ body::after {
   font-size: 34px;
   font-weight: 700;
   letter-spacing: 5px;
-  color: #ffffff;
   margin: 0;
   line-height: 1.1;
-  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 4px rgba(255, 255, 255, 0.2);
   white-space: nowrap;
-  animation: glow-breath 4s ease-in-out infinite;
+  background: linear-gradient(90deg, #ffffff 0%, #ffffff 45%, #f8fafc 48%, #ffffff 50%, #cbd5e1 75%, #94a3b8 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
+          drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
+  animation: title-glow-breath 4.5s ease-in-out infinite, shimmer-sweep 14s ease-in-out infinite;
 }
 
-@keyframes glow-breath {
+@keyframes title-glow-breath {
   0%, 100% {
-    text-shadow: 0 0 15px rgba(139, 92, 246, 0.35), 0 0 4px rgba(255, 255, 255, 0.15);
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
+            drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
   }
   50% {
-    text-shadow: 0 0 25px rgba(139, 92, 246, 0.6), 0 0 8px rgba(255, 255, 255, 0.3);
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
+            drop-shadow(0 0 22px rgba(139, 92, 246, 0.28));
+  }
+}
+
+@keyframes logo-glow-breath {
+  0%, 100% {
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 12px rgba(139, 92, 246, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  50% {
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 22px rgba(139, 92, 246, 0.22);
+    border-color: rgba(139, 92, 246, 0.22);
+  }
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    background-position: 150% center;
+  }
+  15% {
+    background-position: -150% center;
+  }
+  100% {
+    background-position: -150% center;
   }
 }
 
@@ -187,10 +218,10 @@ body::after {
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent-blue);
+  color: #38BDF8;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-top: 3px;
+  letter-spacing: 3.5px;
+  margin-top: 5px;
   margin-bottom: 2px;
   line-height: 1.2;
   white-space: nowrap;
@@ -200,12 +231,12 @@ body::after {
   font-family: 'Inter', sans-serif;
   font-size: 11px;
   font-weight: 500;
-  color: var(--text-muted);
-  letter-spacing: 0.8px;
+  color: #94A3B8;
+  letter-spacing: 1px;
   margin: 0;
   line-height: 1.2;
   white-space: nowrap;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .header-right {
@@ -1033,7 +1064,7 @@ select {
   transform: translateX(-50%);
   width: 600px;
   height: 350px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
 }
@@ -1053,10 +1084,8 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 8px 18px;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.25),
-    0 0 25px rgba(56, 189, 248, 0.08);
   display: block;
+  animation: logo-float 6s ease-in-out infinite, logo-glow-breath 4.5s ease-in-out infinite;
 }
 
 .startup-title {
@@ -1064,22 +1093,24 @@ select {
   font-size: 52px;
   font-weight: 700;
   letter-spacing: 6px;
-  color: #ffffff;
   margin: 0 0 10px 0;
-  text-shadow: 
-    0 0 35px rgba(139, 92, 246, 0.65), 
-    0 0 6px rgba(255, 255, 255, 0.2);
   line-height: 1.1;
-  animation: glow-breath 5s ease-in-out infinite;
+  background: linear-gradient(90deg, #ffffff 0%, #ffffff 40%, #f8fafc 48%, #ffffff 50%, #cbd5e1 75%, #94a3b8 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45))
+          drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
+  animation: title-glow-breath 4.5s ease-in-out infinite, shimmer-sweep 14s ease-in-out infinite;
 }
 
 .startup-subtitle {
   font-family: 'Poppins', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: var(--accent-blue);
+  color: #38BDF8;
   text-transform: uppercase;
-  letter-spacing: 2.5px;
+  letter-spacing: 4px;
   margin: 0 0 10px 0;
   line-height: 1.2;
 }
@@ -1088,11 +1119,11 @@ select {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-muted);
-  letter-spacing: 0.8px;
+  color: #94A3B8;
+  letter-spacing: 1.2px;
   margin: 0 0 45px 0;
   line-height: 1.2;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 .role-cards-grid {
