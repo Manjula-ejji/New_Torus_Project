@@ -1212,10 +1212,27 @@ select {
     inset 0 0 15px rgba(0, 132, 255, 0.2), /* inner glow */
     inset 0 2px 5px rgba(255, 255, 255, 0.1),
     0 0 20px rgba(0, 132, 255, 0.1); /* soft cyan-blue outer glow */
-  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1), border-color 350ms, box-shadow 350ms;
   z-index: 3;
 }
 
+/* Light sweep shine effect pseudo-element */
+.role-icon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+
+/* Outer circular glass ring */
 .role-icon::after {
   content: '';
   position: absolute;
@@ -1227,7 +1244,7 @@ select {
   background: linear-gradient(135deg, rgba(0, 132, 255, 0.45), rgba(168, 85, 247, 0.1) 40%, rgba(0, 132, 255, 0.45));
   z-index: -1;
   opacity: 0.6;
-  transition: all 350ms ease;
+  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 350ms ease;
 }
 
 .role-icon-img {
@@ -1241,21 +1258,57 @@ select {
 }
 
 .role-card-item:hover .role-icon {
-  transform: scale(1.06);
+  transform: scale(1.05); /* Scale circular container slightly */
   border-color: rgba(0, 132, 255, 0.55);
   box-shadow: 
     0 12px 32px rgba(0, 0, 0, 0.5),
-    inset 0 0 22px rgba(0, 132, 255, 0.35), /* icon glow increases */
-    0 0 30px rgba(0, 132, 255, 0.3);
+    inset 0 0 22px rgba(0, 132, 255, 0.35), /* Inner glow increases */
+    0 0 30px rgba(0, 132, 255, 0.3); /* Outer glow increases */
+  animation: icon-pulse-hover 2.2s ease-in-out infinite alternate 0.9s; /* Breathing pulse after rotation completes */
 }
 
-.role-card-item:hover .role-icon-img {
-  transform: scale(1.05);
-}
-
+/* Rotate ONLY the outer circular glass ring (::after) by 360 degrees */
 .role-card-item:hover .role-icon::after {
   opacity: 1;
-  transform: rotate(45deg);
+  transform: rotate(360deg);
+  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 350ms ease;
+}
+
+/* Light sweep animation on hover */
+.role-card-item:hover .role-icon::before {
+  opacity: 1;
+  animation: shine-sweep 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Keep PNG icon perfectly upright and stationary (no rotation) */
+.role-card-item:hover .role-icon-img {
+  transform: scale(1.0);
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes icon-pulse-hover {
+  0% {
+    transform: scale(1.05);
+    box-shadow: 
+      0 12px 32px rgba(0, 0, 0, 0.5),
+      inset 0 0 22px rgba(0, 132, 255, 0.35),
+      0 0 30px rgba(0, 132, 255, 0.3);
+  }
+  100% {
+    transform: scale(1.07);
+    box-shadow: 
+      0 14px 36px rgba(0, 0, 0, 0.55),
+      inset 0 0 26px rgba(0, 132, 255, 0.45),
+      0 0 38px rgba(0, 132, 255, 0.42);
+  }
 }
 
 .role-name {
