@@ -1,27 +1,29 @@
 :root {
-  --bg-main: #090B18;
-  --bg-card: rgba(20, 22, 42, 0.45);
-  --bg-control: rgba(20, 22, 42, 0.7);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-active: #8B5CF6;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --accent: #8B5CF6;
-  --accent-hover: #a78bfa;
-  --accent-blue: #38BDF8;
-  --accent-cyan: #22D3EE;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --success: #10b981;
-  --shadow-lg:
-    0 20px 40px -5px rgba(0, 0, 0, 0.6),
-    0 0 25px rgba(139, 92, 246, 0.08),
+  --bg-main: #060B18; /* Deep Medical Navy */
+  --bg-surface: #0E1628; /* Secondary Surface */
+  --bg-card: #111B31; /* Card Background */
+  --bg-control: rgba(14, 22, 40, 0.75);
+  --border-color: rgba(255, 255, 255, 0.10); /* Normal state border */
+  --border-active: #0084FF; /* Premium medical blue */
+  --text-main: #FFFFFF; /* Text Primary */
+  --text-muted: #B7C5D8; /* Text Secondary */
+  --accent: #0084FF; /* Premium Accent Blue */
+  --accent-hover: #4FD1FF;
+  --accent-blue: #0084FF;
+  --accent-cyan: #00C8FF;
+  --danger: #FF5C7A;
+  --danger-hover: #e04a66;
+  --success: #00D084;
+  --warning: #FFC857;
+  
+  --shadow-lg: 
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    0 0 40px rgba(0, 132, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  --font-sans: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
-
-  /* Additional Premium Shadows */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  
   --shadow-inner-glow: inset 0 2px 4px rgba(255, 255, 255, 0.08), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-button-glow: 0 4px 14px rgba(139, 92, 246, 0.4), 0 0 10px rgba(56, 189, 248, 0.2);
+  --shadow-button-glow: 0 4px 14px rgba(0, 132, 255, 0.35), 0 0 10px rgba(79, 209, 255, 0.2);
 }
 
 * {
@@ -32,12 +34,28 @@
 
 body {
   background: var(--bg-main);
-  /* Layered Background: Radial glow behind title, ambient corner glows, linear color fade */
-  background-image:
-    radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
-    radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
-    linear-gradient(180deg, #090B18 0%, #05060f 100%);
+  /* Layered Background: Radial glow behind title, ambient corner glows, linear color fade, and soft particles */
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(0, 132, 255, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 0% 0%, rgba(0, 132, 255, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.06) 0%, transparent 45%),
+    radial-gradient(rgba(255, 255, 255, 0.02) 1.2px, transparent 1.2px), /* Tiny floating particles simulation */
+    radial-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(180deg, #060B18 0%, #03050b 100%);
+  background-size: 
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    160px 160px,
+    260px 260px,
+    100% 100%;
+  background-position: 
+    0 0,
+    0 0,
+    0 0,
+    40px 50px,
+    110px 150px,
+    0 0;
   color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
@@ -55,16 +73,22 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.008) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, transparent 1px);
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
   background-size: 35px 35px;
   background-position: center center;
   z-index: -2;
   pointer-events: none;
+  animation: grid-pulse 10s ease-in-out infinite alternate;
 }
 
-/* Soft Vignette Overlay */
+@keyframes grid-pulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Soft Vignette Overlay + Fine Noise Texture */
 body::after {
   content: '';
   position: fixed;
@@ -72,7 +96,9 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle, transparent 60%, rgba(5, 6, 15, 0.35) 100%);
+  background: 
+    radial-gradient(circle, transparent 55%, rgba(3, 5, 11, 0.5) 100%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.012'/%3E%3C/svg%3E");
   z-index: -1;
   pointer-events: none;
 }
@@ -1069,6 +1095,18 @@ select {
   align-items: center;
   position: relative;
   gap: 0;
+  animation: page-entrance 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes page-entrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.97) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .role-selection-container::before {
@@ -1085,7 +1123,7 @@ select {
 }
 
 .startup-logo-wrapper {
-  margin-bottom: 24px;
+  margin-bottom: 12px; /* Reduced vertical space between Logo and TORUS by 20px */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1095,12 +1133,18 @@ select {
   width: 170px;
   height: auto;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(17, 28, 47, 0.5); /* Premium glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.12); /* Thin border */
   border-radius: 16px;
   padding: 8px 18px;
   display: block;
-  animation: logo-float 6s ease-in-out infinite, logo-glow-breath 4.5s ease-in-out infinite;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2), /* Reflection highlight */
+    0 0 15px rgba(59, 168, 255, 0.12); /* Soft border glow */
+  animation: logo-float 8s ease-in-out infinite alternate; /* Very subtle floating animation */
 }
 
 .startup-title {
@@ -1110,11 +1154,12 @@ select {
   letter-spacing: 6px;
   margin: 0 0 10px 0;
   line-height: 1.1;
-  background: linear-gradient(90deg, #ffffff 0%, #ffffff 40%, #f8fafc 48%, #ffffff 50%, #cbd5e1 75%, #94a3b8 100%);
-  background-size: 300% 100%;
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%); /* White to silver gradient */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.12));
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Very soft text glow */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45)) 
+          drop-shadow(0 0 15px rgba(139, 92, 246, 0.15)); /* Elegant text shadow & drop shadow */
   animation: title-glow-breath 4.5s ease-in-out infinite, shimmer-sweep 14s ease-in-out infinite;
 }
 
@@ -1122,22 +1167,23 @@ select {
   font-family: 'Poppins', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #38BDF8;
+  color: #00C8FF; /* Medical Cyan */
   text-transform: uppercase;
   letter-spacing: 4px;
   margin: 0 0 10px 0;
   line-height: 1.2;
+  text-shadow: 0 0 8px rgba(0, 200, 255, 0.2);
 }
 
 .startup-platform {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #94A3B8;
+  color: #F8FAFC; /* White color for contrast */
   letter-spacing: 1.2px;
   margin: 0 0 45px 0;
   line-height: 1.2;
-  opacity: 0.85;
+  opacity: 0.95; /* Increased opacity/brightness by around 15-20% */
 }
 
 .role-cards-grid {
@@ -1145,32 +1191,63 @@ select {
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
   width: 100%;
+  position: relative; /* Anchor for background ECG line */
+  z-index: 1;
+}
+
+/* Subtle Animated ECG Line Behind Cards (2-3% opacity, medical identity detail) */
+.role-cards-grid::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  width: 120%;
+  height: 120px;
+  transform: translateY(-50%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2000 100'%3E%3Cpath d='M0,50 L200,50 L215,35 L225,80 L235,10 L245,90 L255,40 L265,60 L280,50 L500,50 L700,50 L715,35 L725,80 L735,10 L745,90 L755,40 L765,60 L780,50 L1000,50 L1200,50 L1215,35 L1225,80 L1235,10 L1245,90 L1255,40 L1265,60 L1280,50 L1500,50 L1700,50 L1715,35 L1725,80 L1735,10 L1745,90 L1755,40 L1765,60 L1780,50 L2000,50' fill='none' stroke='%234FD9FF' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 1000px 100%;
+  background-repeat: repeat-x;
+  opacity: 0.025; /* Highly subtle 2.5% opacity */
+  z-index: -1;
+  pointer-events: none;
+  animation: ecg-scroll-slow 40s linear infinite;
+}
+
+@keyframes ecg-scroll-slow {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -1000px 0;
+  }
 }
 
 /* Role Selection Cards */
 .role-card-item {
-  background: linear-gradient(135deg, rgba(18, 28, 48, 0.6) 0%, rgba(9, 13, 26, 0.8) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px; /* Increased to 24px */
-  padding: 48px 32px; /* Increased spacing inside */
+  background: linear-gradient(180deg, rgba(17, 28, 47, 0.72) 0%, rgba(10, 14, 25, 0.92) 100%); /* #111C2F themed top-to-bottom glassmorphism */
+  border: 1.5px solid rgba(255, 255, 255, 0.10); /* Normal state border: rgba(255,255,255,0.10) */
+  border-radius: 24px; /* Border radius exactly 24px */
+  padding: 48px 32px; /* Spacing inside */
   cursor: pointer;
-  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1); /* Smooth 350ms */
+  transition: all 320ms cubic-bezier(0.4, 0, 0.2, 1); /* Smooth 320ms transition */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 0; /* Spacing managed cleanly via margins */
   backdrop-filter: blur(28px) saturate(120%);
   -webkit-backdrop-filter: blur(28px) saturate(120%);
   /* Multiple ambient shadows + top light highlight + blue edge lighting */
   box-shadow: 
     0 12px 30px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(0, 132, 255, 0.06),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.12),
+    0 0 20px rgba(59, 168, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12), /* Inner highlight */
     inset 0 0 20px rgba(255, 255, 255, 0.02);
   position: relative;
   overflow: hidden;
+  animation: border-glow-cycle 10s ease-in-out infinite alternate; /* Animated premium border */
 }
 
+/* Subtle Top Glass Reflection Highlight */
 .role-card-item::before {
   content: '';
   position: absolute;
@@ -1178,19 +1255,32 @@ select {
   left: 0;
   right: 0;
   height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent); /* Faint top highlight */
   pointer-events: none;
+  z-index: 2;
 }
 
 .role-card-item:hover {
-  transform: translateY(-10px) scale(1.03); /* Lift card, scale to 1.03 */
-  border-color: rgba(0, 132, 255, 0.35); /* Border becomes brighter */
-  background: linear-gradient(135deg, rgba(22, 34, 58, 0.7) 0%, rgba(13, 19, 38, 0.85) 100%);
+  transform: translateY(-8px) scale(1.02); /* Lift card by 8px, Scale to 1.02 */
+  border-color: rgba(120, 190, 255, 0.35) !important; /* Hover border rgba(120,190,255,0.35) */
+  background: linear-gradient(180deg, rgba(24, 38, 64, 0.75) 0%, rgba(12, 18, 32, 0.95) 100%) !important; /* Brighten background by ~5% */
   box-shadow: 
     0 20px 45px rgba(0, 0, 0, 0.55),
-    0 0 35px rgba(0, 132, 255, 0.22), /* increased glow */
+    0 0 35px rgba(120, 190, 255, 0.25), /* Increased soft border glow */
     inset 0 1.5px 0 rgba(255, 255, 255, 0.18),
     inset 0 0 25px rgba(255, 255, 255, 0.04);
+}
+
+@keyframes border-glow-cycle {
+  0% {
+    border-color: rgba(59, 168, 255, 0.15); /* Primary Blue tint */
+  }
+  50% {
+    border-color: rgba(139, 92, 246, 0.12); /* Purple tint */
+  }
+  100% {
+    border-color: rgba(79, 217, 255, 0.15); /* Medical Cyan tint */
+  }
 }
 
 /* circular icon containers with multiple glass layers */
@@ -1199,19 +1289,19 @@ select {
   height: 94px;
   border-radius: 50%;
   background: radial-gradient(circle at 50% 20%, rgba(18, 28, 48, 0.85) 0%, rgba(9, 13, 26, 0.95) 100%);
-  border: 1.5px solid rgba(0, 132, 255, 0.25); /* Cyan-blue outer glow border */
-  outline: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(59, 168, 255, 0.3); /* Primary Blue outer ring */
+  outline: 1.5px solid rgba(255, 255, 255, 0.08); /* inner ring */
   outline-offset: -4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 26px; /* Increased spacing below Icon (24-28px range) */
   position: relative;
   box-shadow: 
     0 8px 24px rgba(0, 0, 0, 0.45),
-    inset 0 0 15px rgba(0, 132, 255, 0.2), /* inner glow */
-    inset 0 2px 5px rgba(255, 255, 255, 0.1),
-    0 0 20px rgba(0, 132, 255, 0.1); /* soft cyan-blue outer glow */
+    inset 0 0 15px rgba(59, 168, 255, 0.22), /* inner glow */
+    inset 0 2px 5px rgba(255, 255, 255, 0.1), /* glass reflection */
+    0 0 24px rgba(59, 168, 255, 0.16); /* increased soft blue glow */
   transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1), border-color 350ms, box-shadow 350ms;
   z-index: 3;
 }
@@ -1259,11 +1349,11 @@ select {
 
 .role-card-item:hover .role-icon {
   transform: scale(1.05); /* Scale circular container slightly */
-  border-color: rgba(0, 132, 255, 0.55);
+  border-color: rgba(79, 217, 255, 0.6); /* Medical Cyan border glow */
   box-shadow: 
     0 12px 32px rgba(0, 0, 0, 0.5),
-    inset 0 0 22px rgba(0, 132, 255, 0.35), /* Inner glow increases */
-    0 0 30px rgba(0, 132, 255, 0.3); /* Outer glow increases */
+    inset 0 0 22px rgba(59, 168, 255, 0.4), /* inner glow increases */
+    0 0 34px rgba(59, 168, 255, 0.32); /* outer soft glow increases */
   animation: icon-pulse-hover 2.2s ease-in-out infinite alternate 0.9s; /* Breathing pulse after rotation completes */
 }
 
@@ -1299,15 +1389,15 @@ select {
     transform: scale(1.05);
     box-shadow: 
       0 12px 32px rgba(0, 0, 0, 0.5),
-      inset 0 0 22px rgba(0, 132, 255, 0.35),
-      0 0 30px rgba(0, 132, 255, 0.3);
+      inset 0 0 22px rgba(59, 168, 255, 0.4),
+      0 0 34px rgba(59, 168, 255, 0.32);
   }
   100% {
     transform: scale(1.07);
     box-shadow: 
       0 14px 36px rgba(0, 0, 0, 0.55),
-      inset 0 0 26px rgba(0, 132, 255, 0.45),
-      0 0 38px rgba(0, 132, 255, 0.42);
+      inset 0 0 26px rgba(59, 168, 255, 0.45),
+      0 0 42px rgba(59, 168, 255, 0.44);
   }
 }
 
@@ -1316,42 +1406,49 @@ select {
   font-size: 24px;
   font-weight: 700; /* Increased font weight */
   color: #ffffff; /* Bright white */
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 18px; /* Spacing Title -> Badge (16-20px range) */
   letter-spacing: 1px; /* Improved letter spacing */
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.15); /* Very subtle glow */
 }
 
-/* Redesigned Premium Purple-Blue Gradient UID Badges */
+/* Redesigned Premium Symmetrical Purple-Blue Gradient UID Badges */
 .role-uid-label {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 700; /* Increased font weight */
   color: #ffffff; /* White text */
   background: linear-gradient(135deg, rgba(108, 59, 255, 0.35) 0%, rgba(168, 85, 247, 0.35) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12); /* Premium border */
-  padding: 6px 14px;
+  border: 1.5px solid rgba(168, 85, 247, 0.35); /* Premium border */
   border-radius: 99px;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   box-shadow:
     0 4px 10px rgba(0, 0, 0, 0.25),
     0 0 15px rgba(168, 85, 247, 0.22), /* Soft purple glow */
-    inset 0 1px 0 rgba(0, 132, 255, 0.4), /* Subtle blue highlight */
+    inset 0 1px 0 rgba(255, 255, 255, 0.25), /* glossy reflection highlight */
+    inset 0 1.5px 0 rgba(108, 59, 255, 0.45), /* Subtle blue highlight */
     inset 0 -2px 4px rgba(0, 0, 0, 0.3); /* Inner shadow */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-flex;
-  align-items: center;
+  
+  /* Symmetrical sizing properties so badges are identical */
+  min-width: 120px;
+  padding: 12px 22px;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  margin-top: 0;
 }
 
 .role-card-item:hover .role-uid-label {
   background: linear-gradient(135deg, rgba(108, 59, 255, 0.55) 0%, rgba(168, 85, 247, 0.55) 100%);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(168, 85, 247, 0.55);
   box-shadow:
     0 6px 14px rgba(0, 0, 0, 0.35),
-    0 0 22px rgba(168, 85, 247, 0.45), /* UID badge glow increases */
-    inset 0 1.5px 0 rgba(0, 132, 255, 0.6),
+    0 0 24px rgba(168, 85, 247, 0.45), /* UID badge glow increases */
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 1.5px 0 rgba(108, 59, 255, 0.65),
     inset 0 -2px 4px rgba(0, 0, 0, 0.3);
 }
 
