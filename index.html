@@ -15,11 +15,7 @@
 </head>
 
 <body>
-    <div class="ecg-bg-wrapper">
-      <svg class="ecg-line" viewBox="0 0 2000 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 0 50 L 200 50 L 215 35 L 225 80 L 235 10 L 245 90 L 255 40 L 265 60 L 280 50 L 500 50 L 700 50 L 715 35 L 725 80 L 735 10 L 745 90 L 755 40 L 765 60 L 780 50 L 1000 50 L 1200 50 L 1215 35 L 1225 80 L 1235 10 L 1245 90 L 1255 40 L 1265 60 L 1280 50 L 1500 50 L 1700 50 L 1715 35 L 1725 80 L 1735 10 L 1745 90 L 1755 40 L 1765 60 L 1780 50 L 2000 50" fill="none" stroke="currentColor" stroke-width="1.5" />
-      </svg>
-    </div>
+  <div id="role-selection-screen" class="role-selection-screen">
     <div class="role-selection-container">
       <div class="startup-logo-wrapper">
         <img src="logo.png" alt="PlebC Logo" class="startup-logo">
@@ -29,40 +25,17 @@
       <p class="startup-platform">Next-Generation Healthcare Robotics Platform</p>
       <div class="role-cards-grid">
         <div class="role-card-item" data-role="doctor" data-uid="3001">
-          <div class="role-icon">
-            <svg class="medical-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4.5 3a2 2 0 1 0 4 0a2 2 0 1 0-4 0" />
-              <path d="M15.5 3a2 2 0 1 0 4 0a2 2 0 1 0-4 0" />
-              <path d="M6.5 5v5a5.5 5.5 0 0 0 11 0V5" />
-              <path d="M12 10.5v3.5" />
-              <path d="M12 14a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
-              <circle cx="12" cy="18" r="1" fill="currentColor" />
-            </svg>
-          </div>
+          <div class="role-icon">👨‍⚕️</div>
           <h3 class="role-name">Doctor</h3>
           <p class="role-uid-label">UID: 3001</p>
         </div>
         <div class="role-card-item" data-role="patient" data-uid="4001">
-          <div class="role-icon">
-            <svg class="medical-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="11" cy="7" r="4" />
-              <path d="M22 10h-2.5l-1 2.5-1.5-5-1 4H14" />
-            </svg>
-          </div>
+          <div class="role-icon">🧑</div>
           <h3 class="role-name">Patient</h3>
           <p class="role-uid-label">UID: 4001</p>
         </div>
         <div class="role-card-item" data-role="viewer" data-uid="6001">
-          <div class="role-icon">
-            <svg class="medical-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
-              <path d="M6 10s2.5-3.5 6-3.5 6 3.5 6 3.5-2.5 3.5-6 3.5-6-3.5-6-3.5z" />
-              <circle cx="12" cy="10" r="1.5" />
-            </svg>
-          </div>
+          <div class="role-icon">👁️</div>
           <h3 class="role-name">Viewer</h3>
           <p class="role-uid-label">UID: 6001</p>
         </div>
