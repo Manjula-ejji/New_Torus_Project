@@ -36,6 +36,7 @@ let localTracks = {
 };
 
 let popoutWindow = null;
+let doctorPopoutWindow = null;
 
 // Store zoom and translation states for each video card container
 const zoomStates = new Map();
@@ -136,7 +137,7 @@ function updateCardOrders() {
     if (card.id === "local-card") {
       const localPopoutBtn = document.getElementById("local-popout-btn");
       if (localPopoutBtn) {
-        localPopoutBtn.style.display = (uid === 5001) ? "" : "none";
+        localPopoutBtn.style.display = (uid === 5001 || uid === 3001) ? "" : "none";
       }
     }
   });
@@ -475,7 +476,14 @@ localPinBtn.addEventListener("click", () => {
 
 const localPopoutBtn = document.getElementById("local-popout-btn");
 if (localPopoutBtn) {
-  localPopoutBtn.addEventListener("click", openPopoutWindow);
+  localPopoutBtn.addEventListener("click", () => {
+    const localUidVal = uidInput.value.trim() ? Number(uidInput.value) : (roleInput.value === "patient" ? 4001 : 3001);
+    if (localUidVal === 3001) {
+      openDoctorPopoutWindow();
+    } else {
+      openPopoutWindow();
+    }
+  });
 }
 
 localZoomInBtn.addEventListener("click", () => {
@@ -723,6 +731,20 @@ function createRemotePlayer(uid, videoTrack) {
         </svg>
       `;
       popoutBtn.addEventListener("click", openPopoutWindow);
+      controls.appendChild(popoutBtn);
+    } else if (uid === 3001) {
+      const popoutBtn = document.createElement("button");
+      popoutBtn.className = "control-btn toggle-btn popout-btn";
+      popoutBtn.type = "button";
+      popoutBtn.title = "Open in New Window";
+      popoutBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      `;
+      popoutBtn.addEventListener("click", openDoctorPopoutWindow);
       controls.appendChild(popoutBtn);
     }
 
@@ -1576,6 +1598,293 @@ window.addEventListener("popstate", async (event) => {
 });
 
 // ==========================================================================
+// POP-OUT / NEW WINDOW DOCTOR CAMERA LOGIC
+// ==========================================================================
+
+function getDoctorCard() {
+  const remoteCard = document.getElementById("remote-card-3001");
+  if (remoteCard) return remoteCard;
+  const localUidVal = uidInput.value.trim() ? Number(uidInput.value) : (roleInput.value === "patient" ? 4001 : 3001);
+  if (localUidVal === 3001) {
+    return document.getElementById("local-card");
+  }
+  return null;
+}
+
+function syncDoctorPopoutPlayer() {
+  if (!doctorPopoutWindow || doctorPopoutWindow.closed) return;
+
+  const popoutCard = doctorPopoutWindow.document.getElementById("popout-card");
+  const popoutPlayer = doctorPopoutWindow.document.getElementById("popout-player");
+  if (!popoutCard || !popoutPlayer) return;
+
+  const parentCard = getDoctorCard();
+  if (!parentCard) {
+    // Show placeholder if card is not present
+    if (!popoutPlayer.querySelector(".placeholder-container")) {
+      popoutPlayer.innerHTML = `
+        <div class="placeholder-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); font-size: 0.9rem; gap: 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          No Camera Input (View-Only Mode)
+        </div>
+      `;
+    }
+    return;
+  }
+
+  const parentPlayer = parentCard.id === "local-card" ? localPlayerEl : parentCard.querySelector(".remote-player");
+  const parentVideo = parentPlayer ? parentPlayer.querySelector("video") : null;
+
+  if (parentVideo && parentVideo.srcObject) {
+    // Check if the popout already has a video element
+    let childVideo = popoutPlayer.querySelector("video");
+    if (!childVideo) {
+      popoutPlayer.innerHTML = ""; // Clear placeholder
+      childVideo = doctorPopoutWindow.document.createElement("video");
+      childVideo.autoplay = true;
+      childVideo.playsInline = true;
+      childVideo.muted = true;
+      childVideo.style.width = "100%";
+      childVideo.style.height = "100%";
+      childVideo.style.display = "block";
+      popoutPlayer.appendChild(childVideo);
+    }
+    // Only update srcObject if it has changed
+    if (childVideo.srcObject !== parentVideo.srcObject) {
+      childVideo.srcObject = parentVideo.srcObject;
+      childVideo.play().catch(err => console.error("Error playing child video:", err));
+    }
+
+    // Mirror zoom transformation classes and aspect ratios
+    if (parentCard.style.getPropertyValue("--video-aspect")) {
+      popoutCard.style.setProperty("--video-aspect", parentCard.style.getPropertyValue("--video-aspect"));
+    }
+    if (parentCard.classList.contains("has-aspect")) {
+      popoutCard.classList.add("has-aspect");
+    } else {
+      popoutCard.classList.remove("has-aspect");
+    }
+
+    // Apply exact zoom from parent to maintain zoom state initially or during parent zoom actions
+    const parentZoom = zoomStates.get(parentCard.id);
+    const popoutZoom = zoomStates.get("doctor-popout-card");
+    if (parentZoom && (!popoutZoom || popoutZoom.scale !== parentZoom.scale || popoutZoom.translateX !== parentZoom.translateX || popoutZoom.translateY !== parentZoom.translateY)) {
+      zoomStates.set("doctor-popout-card", { ...parentZoom });
+      applyZoomTransform(popoutCard, popoutPlayer);
+    }
+  } else {
+    // Parent video doesn't exist, show placeholder
+    if (!popoutPlayer.querySelector(".placeholder-container")) {
+      popoutPlayer.innerHTML = `
+        <div class="placeholder-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); font-size: 0.9rem; gap: 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          No Camera Input (View-Only Mode)
+        </div>
+      `;
+    }
+  }
+}
+
+function syncDoctorPopoutControls() {
+  if (!doctorPopoutWindow || doctorPopoutWindow.closed) return;
+
+  const parentCard = getDoctorCard();
+  if (!parentCard) return;
+
+  const popoutCard = doctorPopoutWindow.document.getElementById("popout-card");
+  if (!popoutCard) return;
+
+  // Sync Camera button state
+  const parentCamBtn = parentCard.querySelector(".camera-btn");
+  const childCamBtn = doctorPopoutWindow.document.getElementById("popout-camera-btn");
+  if (parentCamBtn && childCamBtn) {
+    childCamBtn.disabled = parentCamBtn.disabled;
+    if (parentCamBtn.classList.contains("active")) {
+      childCamBtn.classList.add("active");
+      childCamBtn.classList.remove("inactive");
+      childCamBtn.title = "Turn Camera OFF";
+    } else {
+      childCamBtn.classList.add("inactive");
+      childCamBtn.classList.remove("active");
+      childCamBtn.title = "Turn Camera ON";
+    }
+  }
+
+  // Sync Mic (Mute) button state
+  const parentMicBtn = parentCard.querySelector(".mic-btn");
+  const childMicBtn = doctorPopoutWindow.document.getElementById("popout-mic-btn");
+  if (parentMicBtn && childMicBtn) {
+    childMicBtn.disabled = parentMicBtn.disabled;
+    if (parentMicBtn.classList.contains("active")) {
+      childMicBtn.classList.add("active");
+      childMicBtn.classList.remove("inactive");
+      childMicBtn.title = "Mute Microphone";
+    } else {
+      childMicBtn.classList.add("inactive");
+      childMicBtn.classList.remove("active");
+      childMicBtn.title = "Unmute Microphone";
+    }
+  }
+
+  // Sync Fit button text and active state
+  const childFitBtn = doctorPopoutWindow.document.getElementById("popout-fit-btn");
+  if (childFitBtn) {
+    if (parentCard.classList.contains("fit-contain")) {
+      popoutCard.classList.remove("fit-cover");
+      popoutCard.classList.add("fit-contain");
+      childFitBtn.textContent = "Fit";
+      childFitBtn.classList.remove("active");
+    } else {
+      popoutCard.classList.remove("fit-contain");
+      popoutCard.classList.add("fit-cover");
+      childFitBtn.textContent = "Fill";
+      childFitBtn.classList.add("active");
+    }
+  }
+
+  // Sync Focus button state
+  const childPinBtn = doctorPopoutWindow.document.getElementById("popout-pin-btn");
+  if (childPinBtn) {
+    if (parentCard.classList.contains("pinned")) {
+      popoutCard.classList.add("pinned");
+      childPinBtn.textContent = "Unfocus";
+      childPinBtn.classList.add("active");
+    } else {
+      popoutCard.classList.remove("pinned");
+      childPinBtn.textContent = "Focus";
+      childPinBtn.classList.remove("active");
+    }
+  }
+}
+
+function openDoctorPopoutWindow() {
+  if (doctorPopoutWindow && !doctorPopoutWindow.closed) {
+    doctorPopoutWindow.focus();
+    return;
+  }
+
+  doctorPopoutWindow = window.open("", "DoctorPopout", "width=1024,height=768,menubar=no,toolbar=no,location=no,status=no");
+  if (!doctorPopoutWindow) {
+    alert("Popup blocked! Please allow popups for this page to view the popout doctor camera feed.");
+    return;
+  }
+
+  const doc = doctorPopoutWindow.document;
+  doc.open();
+  doc.write(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doctor Camera</title>
+</head>
+<body class="popout-body" style="margin: 0; padding: 0; background: #060B18; overflow: hidden; height: 100vh;">
+  <div class="video-card fit-contain" id="popout-card" style="width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column;">
+    <div class="video-header" style="padding: 12px 20px; flex-shrink: 0;">
+      <h2>📹 Doctor Camera</h2>
+      <div class="video-controls">
+        <button class="control-btn toggle-btn camera-btn" id="popout-camera-btn" type="button" title="Toggle Camera">
+          <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 7l-7 5 7 5V7z"></path>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+          </svg>
+          <svg class="icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10l-2.58-1.84M23 7l-7 5 7 5V7z"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+        <button class="control-btn toggle-btn mic-btn" id="popout-mic-btn" type="button" title="Toggle Microphone">
+          <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+          <svg class="icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+            <path d="M17 11a5 5 0 0 1-5 5m-3.87-1.17A7 7 0 0 1 5 10v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </button>
+        <button class="control-btn zoom-out-btn" id="popout-zoom-out-btn" type="button" title="Zoom Out">-</button>
+        <button class="control-btn zoom-in-btn" id="popout-zoom-in-btn" type="button" title="Zoom In">+</button>
+        <button class="control-btn fit-btn" id="popout-fit-btn" type="button" title="Toggle Fit/Fill Mode">Fit</button>
+        <button class="control-btn pin-btn" id="popout-pin-btn" type="button" title="Focus Feed">Focus</button>
+      </div>
+    </div>
+    <div id="popout-player" class="remote-player" style="flex: 1; position: relative; overflow: hidden; background: #000;">
+    </div>
+  </div>
+</body>
+</html>
+  `);
+  doc.close();
+
+  // Dynamically copy stylesheet links & styles, setting base href to resolve relatives
+  const base = doc.createElement("base");
+  base.href = window.location.href;
+  doc.head.appendChild(base);
+
+  document.querySelectorAll('link, style').forEach(el => {
+    doc.head.appendChild(el.cloneNode(true));
+  });
+
+  const popoutCard = doc.getElementById("popout-card");
+  const popoutPlayer = doc.getElementById("popout-player");
+
+  // Setup Zoom and Pan pointer events
+  setupZoomAndPan(popoutCard, popoutPlayer);
+
+  // Set click event handlers for controls in child window
+  doc.getElementById("popout-camera-btn").addEventListener("click", () => {
+    const parentCard = getDoctorCard();
+    if (parentCard) {
+      const btn = parentCard.querySelector(".camera-btn");
+      if (btn) btn.click();
+    }
+  });
+
+  doc.getElementById("popout-mic-btn").addEventListener("click", () => {
+    const parentCard = getDoctorCard();
+    if (parentCard) {
+      const btn = parentCard.querySelector(".mic-btn");
+      if (btn) btn.click();
+    }
+  });
+
+  doc.getElementById("popout-zoom-out-btn").addEventListener("click", () => {
+    adjustZoom(popoutCard, popoutPlayer, -0.25);
+  });
+
+  doc.getElementById("popout-zoom-in-btn").addEventListener("click", () => {
+    adjustZoom(popoutCard, popoutPlayer, 0.25);
+  });
+
+  doc.getElementById("popout-fit-btn").addEventListener("click", () => {
+    const btn = doc.getElementById("popout-fit-btn");
+    toggleFit(popoutCard, btn);
+  });
+
+  doc.getElementById("popout-pin-btn").addEventListener("click", () => {
+    const parentCard = getDoctorCard();
+    if (parentCard) {
+      togglePin(parentCard);
+    }
+  });
+
+  // Perform initial sync
+  syncDoctorPopoutPlayer();
+  syncDoctorPopoutControls();
+
+  // Register unload cleanup
+  doctorPopoutWindow.addEventListener("unload", () => {
+    doctorPopoutWindow = null;
+  });
+}
+
+// ==========================================================================
 // POP-OUT / NEW WINDOW ULTRASOUND FEED LOGIC
 // ==========================================================================
 
@@ -1871,10 +2180,13 @@ function openPopoutWindow() {
   });
 }
 
-// Clean up popout when parent window closes
+// Clean up popouts when parent window closes
 window.addEventListener("beforeunload", () => {
   if (popoutWindow && !popoutWindow.closed) {
     popoutWindow.close();
+  }
+  if (doctorPopoutWindow && !doctorPopoutWindow.closed) {
+    doctorPopoutWindow.close();
   }
 });
 
@@ -1883,5 +2195,9 @@ setInterval(() => {
   if (popoutWindow && !popoutWindow.closed) {
     syncPopoutPlayer();
     syncPopoutControls();
+  }
+  if (doctorPopoutWindow && !doctorPopoutWindow.closed) {
+    syncDoctorPopoutPlayer();
+    syncDoctorPopoutControls();
   }
 }, 250);
