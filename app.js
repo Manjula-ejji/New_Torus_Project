@@ -505,13 +505,12 @@ localCameraBtn.addEventListener("click", async () => {
   }
 });
 
-// Local Mic Button handler
-localMicBtn.addEventListener("click", async () => {
+// Central helper to synchronize local mic mute/unmute status with track, buttons, self-view, and localStorage/logs
+async function setLocalMicMuteState(muted) {
   if (!localTracks.audioTrack) return;
-  const isActive = localMicBtn.classList.contains("active");
-  await localTracks.audioTrack.setEnabled(!isActive);
+  await localTracks.audioTrack.setEnabled(!muted);
 
-  if (isActive) {
+  if (muted) {
     localMicBtn.classList.remove("active");
     localMicBtn.classList.add("inactive");
     localMicBtn.title = "Unmute Microphone";
@@ -524,28 +523,32 @@ localMicBtn.addEventListener("click", async () => {
     muteBtn.textContent = "Mute Mic";
     muteBtn.classList.remove("muted");
   }
+
+  // Sync floating self-view overlay controls
+  syncSelfViewControls();
+
+  if (roleInput.value === "patient") {
+    localStorage.setItem("patient_mic_muted", muted ? "true" : "false");
+    if (muted) {
+      console.log("Patient microphone muted");
+    } else {
+      console.log("Patient microphone unmuted");
+    }
+  }
+}
+
+// Local Mic Button handler
+localMicBtn.addEventListener("click", async () => {
+  if (!localTracks.audioTrack) return;
+  const isCurrentlyMuted = !localMicBtn.classList.contains("active");
+  await setLocalMicMuteState(!isCurrentlyMuted);
 });
 
 // Microphone Mute Button handler (kept for compatibility)
 muteBtn.addEventListener("click", async () => {
   if (!localTracks.audioTrack) return;
-
-  const willMute = !muteBtn.classList.contains("muted");
-  await localTracks.audioTrack.setEnabled(!willMute);
-
-  if (willMute) {
-    muteBtn.textContent = "Unmute Mic";
-    muteBtn.classList.add("muted");
-    localMicBtn.classList.remove("active");
-    localMicBtn.classList.add("inactive");
-    localMicBtn.title = "Unmute Microphone";
-  } else {
-    muteBtn.textContent = "Mute Mic";
-    muteBtn.classList.remove("muted");
-    localMicBtn.classList.add("active");
-    localMicBtn.classList.remove("inactive");
-    localMicBtn.title = "Mute Microphone";
-  }
+  const isCurrentlyMuted = muteBtn.classList.contains("muted");
+  await setLocalMicMuteState(!isCurrentlyMuted);
 });
 
 // Dynamic creation of a remote participant's card with controls
@@ -755,6 +758,19 @@ function createRemotePlayer(uid, videoTrack) {
 async function acquireLocalTracks(role, feedType) {
   let audioTrack = null;
   let videoTrack = null;
+  let hasMicPermission = true;
+
+  if (role === "patient") {
+    try {
+      console.log("Patient: Requesting microphone permission via getUserMedia...");
+      const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      tempStream.getTracks().forEach(track => track.stop());
+    } catch (permissionErr) {
+      hasMicPermission = false;
+      console.warn("Microphone permission denied via getUserMedia:", permissionErr);
+      alert("Microphone permission denied. Joining the call with camera only.");
+    }
+  }
 
   if (role === "patient" && feedType === "screen") {
     // Screen Share Source
@@ -775,33 +791,53 @@ async function acquireLocalTracks(role, feedType) {
       throw new Error("Failed to start screen share: " + (e.message || e));
     }
 
-    try {
-      audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    } catch (e) {
-      console.warn("Microphone access failed for screen share, continuing without audio:", e);
+    if (hasMicPermission) {
+      try {
+        audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        if (audioTrack && role === "patient") {
+          console.log("Patient microphone initialized");
+        }
+      } catch (e) {
+        console.warn("Microphone access failed for screen share, continuing without audio:", e);
+      }
     }
   } else {
     // Standard Camera + Mic Source with full fallback chain
-    try {
-      // Step 1: Try capturing both
-      const tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
-      audioTrack = tracks[0];
-      videoTrack = tracks[1];
-    } catch (err) {
-      console.warn("Failed to capture both camera and microphone, trying fallbacks:", err);
+    if (hasMicPermission) {
+      try {
+        // Step 1: Try capturing both
+        const tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+        audioTrack = tracks[0];
+        videoTrack = tracks[1];
+        if (audioTrack && role === "patient") {
+          console.log("Patient microphone initialized");
+        }
+      } catch (err) {
+        console.warn("Failed to capture both camera and microphone, trying fallbacks:", err);
 
-      // Step 2: Try capturing video only
+        // Step 2: Try capturing video only
+        try {
+          videoTrack = await AgoraRTC.createCameraVideoTrack();
+        } catch (videoErr) {
+          console.warn("Camera capture failed:", videoErr);
+        }
+
+        // Step 3: Try capturing audio only
+        try {
+          audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+          if (audioTrack && role === "patient") {
+            console.log("Patient microphone initialized");
+          }
+        } catch (audioErr) {
+          console.warn("Microphone capture failed:", audioErr);
+        }
+      }
+    } else {
+      // If we don't have mic permission, only capture video
       try {
         videoTrack = await AgoraRTC.createCameraVideoTrack();
       } catch (videoErr) {
         console.warn("Camera capture failed:", videoErr);
-      }
-
-      // Step 3: Try capturing audio only
-      try {
-        audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-      } catch (audioErr) {
-        console.warn("Microphone capture failed:", audioErr);
       }
     }
   }
@@ -894,6 +930,14 @@ async function joinCall() {
 
       if (mediaType === "audio") {
         user.audioTrack.play();
+        if (user.uid === 4001) {
+          const currentRole = roleInput.value;
+          if (currentRole === "doctor") {
+            console.log("Doctor subscribed to patient audio");
+          } else if (currentRole === "viewer") {
+            console.log("Viewer subscribed to patient audio");
+          }
+        }
         const card = document.getElementById(`remote-card-${user.uid}`);
         if (card) {
           const micBtn = card.querySelector(".mic-btn");
@@ -973,6 +1017,26 @@ async function joinCall() {
       activeViewers.add(joinedUid);
     }
 
+    // Cleanup any existing local tracks before acquiring new ones to prevent duplicate microphone tracks or leaks
+    if (localTracks.audioTrack) {
+      try {
+        localTracks.audioTrack.stop();
+        localTracks.audioTrack.close();
+      } catch (e) {
+        console.warn("Error cleaning up existing audio track:", e);
+      }
+      localTracks.audioTrack = null;
+    }
+    if (localTracks.videoTrack) {
+      try {
+        localTracks.videoTrack.stop();
+        localTracks.videoTrack.close();
+      } catch (e) {
+        console.warn("Error cleaning up existing video track:", e);
+      }
+      localTracks.videoTrack = null;
+    }
+
     // Acquire local media streams with full device fallbacks
     const { audioTrack, videoTrack } = await acquireLocalTracks(role, feedType);
     localTracks.audioTrack = audioTrack;
@@ -985,9 +1049,28 @@ async function joinCall() {
       publishTracks.push(audioTrack);
       muteBtn.disabled = false;
       localMicBtn.disabled = false;
-      localMicBtn.classList.remove("inactive");
-      localMicBtn.classList.add("active");
-      localMicBtn.title = "Mute Microphone";
+      if (role === "patient") {
+        const isMuted = localStorage.getItem("patient_mic_muted") === "true";
+        await audioTrack.setEnabled(!isMuted);
+        if (isMuted) {
+          localMicBtn.classList.remove("active");
+          localMicBtn.classList.add("inactive");
+          localMicBtn.title = "Unmute Microphone";
+          muteBtn.textContent = "Unmute Mic";
+          muteBtn.classList.add("muted");
+        } else {
+          localMicBtn.classList.add("active");
+          localMicBtn.classList.remove("inactive");
+          localMicBtn.title = "Mute Microphone";
+          muteBtn.textContent = "Mute Mic";
+          muteBtn.classList.remove("muted");
+        }
+        syncSelfViewControls();
+      } else {
+        localMicBtn.classList.remove("inactive");
+        localMicBtn.classList.add("active");
+        localMicBtn.title = "Mute Microphone";
+      }
     } else {
       muteBtn.disabled = true;
       localMicBtn.disabled = true;
@@ -1054,6 +1137,9 @@ async function joinCall() {
 
     if (publishTracks.length > 0) {
       await client.publish(publishTracks);
+      if (role === "patient" && audioTrack) {
+        console.log("Patient microphone published");
+      }
     }
     updateCardOrders();
 
