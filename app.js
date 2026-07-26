@@ -49,7 +49,8 @@ roleInput.addEventListener("change", () => {
   } else if (selectedRole === "patient") {
     uidInput.value = 4001;
   } else if (selectedRole === "viewer") {
-    uidInput.value = 6001;
+    // Generate a unique random UID for each viewer tab (e.g. 6000 + random)
+    uidInput.value = 6000 + Math.floor(Math.random() * 9000);
   }
   feedTypeContainer.style.display = selectedRole === "patient" ? "" : "none";
 });
@@ -60,44 +61,40 @@ const joinOrder = [];
 function updateCardOrders() {
   const localUidVal = uidInput.value.trim() ? Number(uidInput.value) : (roleInput.value === "patient" ? 4001 : 3001);
 
-  // 1. Get original sorted list (always starts with 5001 if present in joinOrder, followed by others in joinOrder)
-  const originalSortedUids = [];
-  if (joinOrder.includes(5001)) {
-    originalSortedUids.push(5001);
-  }
-  joinOrder.forEach(id => {
-    if (id !== 5001 && !originalSortedUids.includes(id)) {
-      originalSortedUids.push(id);
-    }
-  });
+  // Separate viewers from other feeds
+  const coreFeeds = [5001, 4001, 3001];
 
-  // 2. Check if a card is currently pinned/focused
-  const pinnedCard = document.querySelector(".video-card.pinned");
-  let focusedUid = null;
-  if (pinnedCard) {
-    if (pinnedCard.id === "local-card") {
-      focusedUid = localUidVal;
-    } else {
-      focusedUid = Number(pinnedCard.id.replace("remote-card-", ""));
-    }
-  }
+  // Find all active viewers in joinOrder
+  const viewersInCall = joinOrder.filter(uid => !coreFeeds.includes(uid));
+  // Sort viewers by their assigned viewer numbers
+  viewersInCall.sort((a, b) => getViewerNumber(a) - getViewerNumber(b));
 
-  // 3. Construct the display list: focused UID goes first, remaining Uids shift down
   const displayList = [];
-  if (focusedUid !== null) {
-    displayList.push(focusedUid);
-    originalSortedUids.forEach(id => {
-      if (id !== focusedUid) {
-        displayList.push(id);
-      }
-    });
-  } else {
-    displayList.push(...originalSortedUids);
+
+  // 1. Ultrasound Feed
+  if (joinOrder.includes(5001)) {
+    displayList.push(5001);
+  }
+  // 2. Viewer 1
+  if (viewersInCall.length > 0) {
+    displayList.push(viewersInCall[0]);
+  }
+  // 3. Patient Camera
+  if (joinOrder.includes(4001)) {
+    displayList.push(4001);
+  }
+  // 4. Doctor Camera
+  if (joinOrder.includes(3001)) {
+    displayList.push(3001);
+  }
+  // 5. Rest of the viewers (Viewer 2, Viewer 3, ...)
+  for (let i = 1; i < viewersInCall.length; i++) {
+    displayList.push(viewersInCall[i]);
   }
 
-  // 4. Update CSS order property on all card containers in DOM
-  const allCards = document.querySelectorAll(".video-card");
-  allCards.forEach(card => {
+  // Update card elements' style order and titles
+  const cards = document.querySelectorAll(".video-card");
+  cards.forEach(card => {
     let uid;
     if (card.id === "local-card") {
       uid = localUidVal;
@@ -111,7 +108,40 @@ function updateCardOrders() {
     } else {
       card.style.order = 999;
     }
+
+    // Dynamic Title Management
+    const h2 = card.querySelector(".video-header h2");
+    if (h2) {
+      if (uid === 5001) {
+        h2.innerHTML = "🩺 Remote Ultrasound Feed";
+      } else if (uid === 3001) {
+        const isLocal = (card.id === "local-card");
+        const hasVideo = isLocal ? !!localTracks.videoTrack : !!client?.remoteUsers.find(u => u.uid === 3001)?.videoTrack;
+        h2.innerHTML = "📹 Doctor Camera" + (hasVideo ? "" : " (No Video)");
+      } else if (uid === 4001) {
+        const isLocal = (card.id === "local-card");
+        const hasVideo = isLocal ? !!localTracks.videoTrack : !!client?.remoteUsers.find(u => u.uid === 4001)?.videoTrack;
+        h2.innerHTML = "🩺 Patient Camera" + (hasVideo ? "" : " (No Video)");
+      } else {
+        const viewerNum = getViewerNumber(uid);
+        const isLocal = (card.id === "local-card");
+        const hasVideo = isLocal ? !!localTracks.videoTrack : !!client?.remoteUsers.find(u => u.uid === uid)?.videoTrack;
+        h2.innerHTML = `👤 Viewer ${viewerNum} Camera` + (hasVideo ? "" : " (No Video)");
+      }
+    }
   });
+}
+
+// ==========================================================================
+// VIEWER DYNAMIC TRACKING & NUMBERING LOGIC
+// ==========================================================================
+const activeViewers = new Set();
+
+function getViewerNumber(uid) {
+  const viewers = Array.from(activeViewers);
+  viewers.sort((a, b) => a - b);
+  const idx = viewers.indexOf(uid);
+  return idx !== -1 ? idx + 1 : 1;
 }
 
 // Mirroring Local Camera Feed to Floating Self-View Canvas
@@ -522,11 +552,12 @@ function createRemotePlayer(uid, videoTrack) {
     if (uid === 5001) {
       h2.innerHTML = "🩺 Remote Ultrasound Feed";
     } else if (uid === 3001) {
-      h2.innerHTML = "📹 Doctor Camera";
+      h2.innerHTML = "📹 Doctor Camera (No Video)";
     } else if (uid === 4001) {
-      h2.innerHTML = "🩺 Patient Camera";
+      h2.innerHTML = "🩺 Patient Camera (No Video)";
     } else {
-      h2.innerHTML = "👤 Viewer Camera";
+      const viewerNum = getViewerNumber(uid);
+      h2.innerHTML = `👤 Viewer ${viewerNum} Camera (No Video)`;
     }
 
     header.appendChild(h2);
@@ -536,9 +567,16 @@ function createRemotePlayer(uid, videoTrack) {
 
     // Remote Camera Toggle Button
     const camBtn = document.createElement("button");
-    camBtn.className = "control-btn toggle-btn camera-btn active";
+    if (videoTrack) {
+      camBtn.className = "control-btn toggle-btn camera-btn active";
+      camBtn.title = "Turn Camera OFF";
+      camBtn.disabled = false;
+    } else {
+      camBtn.className = "control-btn toggle-btn camera-btn inactive";
+      camBtn.title = "Turn Camera ON";
+      camBtn.disabled = true;
+    }
     camBtn.type = "button";
-    camBtn.title = "Turn Camera OFF";
     camBtn.innerHTML = `
       <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 7l-7 5 7 5V7z"></path>
@@ -566,11 +604,19 @@ function createRemotePlayer(uid, videoTrack) {
       }
     });
 
-    // Remote Mic Toggle Button
+    // Remote Mic Toggle Button (inactive/disabled by default, will activate if mic track is present)
     const micBtn = document.createElement("button");
-    micBtn.className = "control-btn toggle-btn mic-btn active";
+    const hasAudio = !!(client?.remoteUsers.find(u => u.uid === uid)?.audioTrack);
+    if (hasAudio) {
+      micBtn.className = "control-btn toggle-btn mic-btn active";
+      micBtn.title = "Mute Microphone";
+      micBtn.disabled = false;
+    } else {
+      micBtn.className = "control-btn toggle-btn mic-btn inactive";
+      micBtn.title = "Mute Microphone";
+      micBtn.disabled = true;
+    }
     micBtn.type = "button";
-    micBtn.title = "Mute Microphone";
     micBtn.innerHTML = `
       <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
@@ -651,6 +697,17 @@ function createRemotePlayer(uid, videoTrack) {
     const player = document.createElement("div");
     player.id = `remote-player-${uid}`;
     player.className = "remote-player";
+    
+    // Default placeholder for View-Only mode when video is not publishing
+    if (!videoTrack) {
+      player.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); font-size: 0.9rem; gap: 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          No Camera Input (View-Only Mode)
+        </div>
+      `;
+    }
+
     card.appendChild(player);
 
     videosGrid.appendChild(card);
@@ -749,19 +806,44 @@ async function joinCall() {
   try {
     client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
+    client.on("user-joined", (user) => {
+      console.log("Remote user joined:", user.uid);
+      if (user.uid !== 3001 && user.uid !== 4001 && user.uid !== 5001) {
+        activeViewers.add(user.uid);
+      }
+      if (!joinOrder.includes(user.uid)) {
+        joinOrder.push(user.uid);
+      }
+      // Create viewer/remote card immediately on join (defaulting to placeholder)
+      createRemotePlayer(user.uid, null);
+      updateCardOrders();
+    });
+
     client.on("user-published", async (user, mediaType) => {
       await client.subscribe(user, mediaType);
 
       if (mediaType === "video") {
+        if (user.uid !== 3001 && user.uid !== 4001 && user.uid !== 5001) {
+          activeViewers.add(user.uid);
+        }
+
         const remotePlayer = createRemotePlayer(user.uid, user.videoTrack);
+        remotePlayer.innerHTML = ""; // Clear placeholder
         user.videoTrack.play(remotePlayer, { fit: "contain" });
 
         const card = document.getElementById(`remote-card-${user.uid}`);
         if (card) {
           applyTrackAspectRatio(card, user.videoTrack);
+          
+          // Enable and activate camera control button
+          const camBtn = card.querySelector(".camera-btn");
+          if (camBtn) {
+            camBtn.disabled = false;
+            camBtn.className = "control-btn toggle-btn camera-btn active";
+            camBtn.title = "Turn Camera OFF";
+          }
         }
 
-        // Track join order for sorting
         if (!joinOrder.includes(user.uid)) {
           joinOrder.push(user.uid);
         }
@@ -780,24 +862,56 @@ async function joinCall() {
 
       if (mediaType === "audio") {
         user.audioTrack.play();
+        const card = document.getElementById(`remote-card-${user.uid}`);
+        if (card) {
+          const micBtn = card.querySelector(".mic-btn");
+          if (micBtn) {
+            micBtn.disabled = false;
+            micBtn.className = "control-btn toggle-btn mic-btn active";
+            micBtn.title = "Mute Microphone";
+          }
+        }
       }
     });
 
-    client.on("user-unpublished", (user) => {
-      const card = document.getElementById(`remote-card-${user.uid}`);
-      if (card) {
-        card.remove();
-        zoomStates.delete(`remote-card-${user.uid}`);
+    client.on("user-unpublished", (user, mediaType) => {
+      if (mediaType === "video") {
+        const remotePlayer = document.getElementById(`remote-player-${user.uid}`);
+        if (remotePlayer) {
+          remotePlayer.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); font-size: 0.9rem; gap: 8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              No Camera Input (View-Only Mode)
+            </div>
+          `;
+        }
+        const card = document.getElementById(`remote-card-${user.uid}`);
+        if (card) {
+          const camBtn = card.querySelector(".camera-btn");
+          if (camBtn) {
+            camBtn.disabled = true;
+            camBtn.className = "control-btn toggle-btn camera-btn inactive";
+            camBtn.title = "Turn Camera ON";
+          }
+        }
       }
 
-      const idx = joinOrder.indexOf(user.uid);
-      if (idx !== -1) {
-        joinOrder.splice(idx, 1);
+      if (mediaType === "audio") {
+        const card = document.getElementById(`remote-card-${user.uid}`);
+        if (card) {
+          const micBtn = card.querySelector(".mic-btn");
+          if (micBtn) {
+            micBtn.disabled = true;
+            micBtn.className = "control-btn toggle-btn mic-btn inactive";
+            micBtn.title = "Mute Microphone";
+          }
+        }
       }
       updateCardOrders();
     });
 
     client.on("user-left", (user) => {
+      console.log("Remote user left:", user.uid);
       const card = document.getElementById(`remote-card-${user.uid}`);
       if (card) {
         card.remove();
@@ -808,16 +922,24 @@ async function joinCall() {
       if (idx !== -1) {
         joinOrder.splice(idx, 1);
       }
+      if (user.uid !== 3001 && user.uid !== 4001 && user.uid !== 5001) {
+        activeViewers.delete(user.uid);
+      }
       updateCardOrders();
     });
 
-    await client.join(appId, channel, token, uid);
+    const joinedUid = await client.join(appId, channel, token, uid);
+    uidInput.value = joinedUid;
 
     // Track local user join order
-    if (!joinOrder.includes(uid)) {
-      joinOrder.push(uid);
+    if (!joinOrder.includes(joinedUid)) {
+      joinOrder.push(joinedUid);
     }
     updateCardOrders();
+
+    if (role === "viewer") {
+      activeViewers.add(joinedUid);
+    }
 
     // Acquire local media streams with full device fallbacks
     const { audioTrack, videoTrack } = await acquireLocalTracks(role, feedType);
@@ -862,7 +984,8 @@ async function joinCall() {
         } else if (role === "doctor") {
           localTitle.innerHTML = `📹 Doctor Camera`;
         } else {
-          localTitle.innerHTML = `👤 Viewer Camera`;
+          const viewerNum = getViewerNumber(uid);
+          localTitle.innerHTML = `👤 Viewer ${viewerNum} Camera`;
         }
       }
 
@@ -891,7 +1014,8 @@ async function joinCall() {
         } else if (role === "doctor") {
           localTitle.innerHTML = "📹 Doctor Camera (No Video)";
         } else {
-          localTitle.innerHTML = "👤 Viewer Camera (No Video)";
+          const viewerNum = getViewerNumber(uid);
+          localTitle.innerHTML = `👤 Viewer ${viewerNum} Camera (No Video)`;
         }
       }
     }
@@ -899,6 +1023,7 @@ async function joinCall() {
     if (publishTracks.length > 0) {
       await client.publish(publishTracks);
     }
+    updateCardOrders();
 
     leaveBtn.disabled = false;
     muteBtn.disabled = false;
@@ -1030,6 +1155,22 @@ async function leaveCall() {
       currentX: 0,
       currentY: 0
     });
+
+    // Clear dynamic viewer states
+    activeViewers.clear();
+    viewerMap.clear();
+    activeViewerTabKey = null;
+
+    // Reset local card hierarchy if it was wrapped
+    const playersContainer = document.getElementById("viewer-players-container");
+    if (playersContainer) {
+      localCard.appendChild(localPlayerEl);
+      playersContainer.remove();
+    }
+    const tabsContainer = document.getElementById("viewer-card-tabs");
+    if (tabsContainer) {
+      tabsContainer.remove();
+    }
 
     localPlayerEl.innerHTML = "";
     setStatus("Not connected");
