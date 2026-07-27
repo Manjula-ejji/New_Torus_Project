@@ -154,15 +154,21 @@ body::after {
   height: 100%;
 }
 
-/* PlebC Logo Badge */
 .header-logo {
-  height: 72px; /* Increased by ~70% from original 42px for premium readability and clarity */
-  width: auto;
-  object-fit: contain;
+  height: 94px;
+  /* Reduced height by ~29% for a low-profile look */
+  width: 532px;
+  /* Increased width by ~48% to extend close to the title */
+  object-fit: fill;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  padding: 6px 14px;
+  padding: 4px 16px;
+  /* Low-profile padding for horizontal layout */
+  margin-top: -11px;
+  /* Keep computed header height exactly 104px */
+  margin-bottom: -11px;
+  /* Keep computed header height exactly 104px */
   display: block;
   animation: logo-float 5s ease-in-out infinite, logo-glow-breath 4.5s ease-in-out infinite;
   transition: all 0.3s ease;
@@ -1146,7 +1152,8 @@ select {
 }
 
 .startup-logo {
-  width: 560px; /* Increased by a further ~17% (to 560px) for maximum readability */
+  width: 560px;
+  /* Increased by a further ~17% (to 560px) for maximum readability */
   max-width: 100%;
   height: auto;
   object-fit: contain;
