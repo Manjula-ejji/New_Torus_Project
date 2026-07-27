@@ -42,7 +42,8 @@ let patientPopoutWindow = null;
 // Store zoom and translation states for each video card container
 const zoomStates = new Map();
 
-const PROBE_SVG = `<svg class="title-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; color: #a78bfa; margin-right: 6px;"><path d="M8 3h8a2 2 0 0 1 2 2v3a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2z" fill="rgba(167, 139, 250, 0.2)"/><path d="M6 5c2-1 10-1 12 0"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="10" x2="15" y2="10"/><path d="M12 12v4c0 2-2 3-2 5s2 1 2 1"/></svg>`;
+const PROBE_SVG = `<svg class="title-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; color: #a78bfa; margin-right: 6px;"><path d="M9 9h6v6a3 3 0 0 1-3 3h0a3 3 0 0 1-3-3V9z"/><path d="M8 9V6c0-1.5 1.5-3 4-3s4 1.5 4 3v3"/><path d="M8 6h8"/><path d="M12 18v3c0 1-1 2-2 2"/></svg>`;
+const PATIENT_SVG = `<svg class="title-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; color: #a78bfa; margin-right: 6px;"><circle cx="10" cy="8" r="4"/><path d="M3 20v-2a4 4 0 0 1 4-4h6"/><path d="M19 14v6"/><path d="M16 17h6"/></svg>`;
 
 // Initialize local card state
 localCard.classList.add("fit-contain");
@@ -127,7 +128,7 @@ function updateCardOrders() {
       } else if (uid === 4001) {
         const isLocal = (card.id === "local-card");
         const hasVideo = isLocal ? !!localTracks.videoTrack : !!client?.remoteUsers.find(u => u.uid === 4001)?.videoTrack;
-        h2.innerHTML = "😷 Patient Camera" + (hasVideo ? "" : " (No Video)");
+        h2.innerHTML = PATIENT_SVG + "Patient Camera" + (hasVideo ? "" : " (No Video)");
       } else {
         const viewerNum = getViewerNumber(uid);
         const isLocal = (card.id === "local-card");
@@ -585,7 +586,7 @@ function createRemotePlayer(uid, videoTrack) {
     } else if (uid === 3001) {
       h2.innerHTML = "🩺 Doctor Camera (No Video)";
     } else if (uid === 4001) {
-      h2.innerHTML = "😷 Patient Camera (No Video)";
+      h2.innerHTML = PATIENT_SVG + "Patient Camera (No Video)";
     } else {
       const viewerNum = getViewerNumber(uid);
       h2.innerHTML = `👤 Viewer ${viewerNum} Camera (No Video)`;
@@ -1136,7 +1137,7 @@ async function joinCall() {
         if (uid === 5001) {
           localTitle.innerHTML = PROBE_SVG + "Remote Ultrasound Feed";
         } else if (role === "patient") {
-          localTitle.innerHTML = `😷 Patient Camera`;
+          localTitle.innerHTML = PATIENT_SVG + "Patient Camera";
         } else if (role === "doctor") {
           localTitle.innerHTML = `🩺 Doctor Camera`;
         } else {
@@ -1166,7 +1167,7 @@ async function joinCall() {
       const localTitle = localCard.querySelector(".video-header h2");
       if (localTitle) {
         if (role === "patient") {
-          localTitle.innerHTML = "😷 Patient Camera (No Video)";
+          localTitle.innerHTML = PATIENT_SVG + "Patient Camera (No Video)";
         } else if (role === "doctor") {
           localTitle.innerHTML = "🩺 Doctor Camera (No Video)";
         } else {
@@ -2412,7 +2413,7 @@ function openPatientPopoutWindow() {
 <body class="popout-body" style="margin: 0; padding: 0; background: #060B18; overflow: hidden; height: 100vh;">
   <div class="video-card fit-contain" id="popout-card" style="width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column;">
     <div class="video-header" style="padding: 12px 20px; flex-shrink: 0;">
-      <h2>😷 Patient Camera</h2>
+      <h2>${PATIENT_SVG} Patient Camera</h2>
       <div class="video-controls">
         <button class="control-btn toggle-btn camera-btn" id="popout-camera-btn" type="button" title="Toggle Camera">
           <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
