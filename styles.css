@@ -156,7 +156,7 @@ body::after {
 
 /* PlebC Logo Badge */
 .header-logo {
-  height: 59px; /* Increased by 40% from 42px for consistent sizing ratio and readability */
+  height: 72px; /* Increased by ~70% from original 42px for premium readability and clarity */
   width: auto;
   object-fit: contain;
   background: rgba(255, 255, 255, 0.03);
@@ -1146,7 +1146,7 @@ select {
 }
 
 .startup-logo {
-  width: 238px; /* Increased by 40% from 170px for consistent sizing ratio and readability */
+  width: 170px;
   height: auto;
   object-fit: contain;
   background: rgba(17, 28, 47, 0.5);
