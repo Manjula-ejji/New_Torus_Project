@@ -42,6 +42,8 @@ let patientPopoutWindow = null;
 // Store zoom and translation states for each video card container
 const zoomStates = new Map();
 
+const PROBE_SVG = `<svg class="title-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; color: #a78bfa; margin-right: 6px;"><path d="M8 3h8a2 2 0 0 1 2 2v3a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2z" fill="rgba(167, 139, 250, 0.2)"/><path d="M6 5c2-1 10-1 12 0"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="10" x2="15" y2="10"/><path d="M12 12v4c0 2-2 3-2 5s2 1 2 1"/></svg>`;
+
 // Initialize local card state
 localCard.classList.add("fit-contain");
 
@@ -117,15 +119,15 @@ function updateCardOrders() {
     const h2 = card.querySelector(".video-header h2");
     if (h2) {
       if (uid === 5001) {
-        h2.innerHTML = "🩺 Remote Ultrasound Feed";
+        h2.innerHTML = PROBE_SVG + "Remote Ultrasound Feed";
       } else if (uid === 3001) {
         const isLocal = (card.id === "local-card");
         const hasVideo = isLocal ? !!localTracks.videoTrack : !!client?.remoteUsers.find(u => u.uid === 3001)?.videoTrack;
-        h2.innerHTML = "📹 Doctor Camera" + (hasVideo ? "" : " (No Video)");
+        h2.innerHTML = "🩺 Doctor Camera" + (hasVideo ? "" : " (No Video)");
       } else if (uid === 4001) {
         const isLocal = (card.id === "local-card");
         const hasVideo = isLocal ? !!localTracks.videoTrack : !!client?.remoteUsers.find(u => u.uid === 4001)?.videoTrack;
-        h2.innerHTML = "🩺 Patient Camera" + (hasVideo ? "" : " (No Video)");
+        h2.innerHTML = "😷 Patient Camera" + (hasVideo ? "" : " (No Video)");
       } else {
         const viewerNum = getViewerNumber(uid);
         const isLocal = (card.id === "local-card");
@@ -579,11 +581,11 @@ function createRemotePlayer(uid, videoTrack) {
 
     // Label roles intuitively based on predefined UIDs
     if (uid === 5001) {
-      h2.innerHTML = "🩺 Remote Ultrasound Feed";
+      h2.innerHTML = PROBE_SVG + "Remote Ultrasound Feed";
     } else if (uid === 3001) {
-      h2.innerHTML = "📹 Doctor Camera (No Video)";
+      h2.innerHTML = "🩺 Doctor Camera (No Video)";
     } else if (uid === 4001) {
-      h2.innerHTML = "🩺 Patient Camera (No Video)";
+      h2.innerHTML = "😷 Patient Camera (No Video)";
     } else {
       const viewerNum = getViewerNumber(uid);
       h2.innerHTML = `👤 Viewer ${viewerNum} Camera (No Video)`;
@@ -1132,11 +1134,11 @@ async function joinCall() {
       const localTitle = localCard.querySelector(".video-header h2");
       if (localTitle) {
         if (uid === 5001) {
-          localTitle.innerHTML = `🩺 Remote Ultrasound Feed`;
+          localTitle.innerHTML = PROBE_SVG + "Remote Ultrasound Feed";
         } else if (role === "patient") {
-          localTitle.innerHTML = `🩺 Patient Camera`;
+          localTitle.innerHTML = `😷 Patient Camera`;
         } else if (role === "doctor") {
-          localTitle.innerHTML = `📹 Doctor Camera`;
+          localTitle.innerHTML = `🩺 Doctor Camera`;
         } else {
           const viewerNum = getViewerNumber(uid);
           localTitle.innerHTML = `👤 Viewer ${viewerNum} Camera`;
@@ -1164,9 +1166,9 @@ async function joinCall() {
       const localTitle = localCard.querySelector(".video-header h2");
       if (localTitle) {
         if (role === "patient") {
-          localTitle.innerHTML = "🩺 Patient Camera (No Video)";
+          localTitle.innerHTML = "😷 Patient Camera (No Video)";
         } else if (role === "doctor") {
-          localTitle.innerHTML = "📹 Doctor Camera (No Video)";
+          localTitle.innerHTML = "🩺 Doctor Camera (No Video)";
         } else {
           const viewerNum = getViewerNumber(uid);
           localTitle.innerHTML = `👤 Viewer ${viewerNum} Camera (No Video)`;
@@ -1798,7 +1800,7 @@ function openDoctorPopoutWindow() {
 <body class="popout-body" style="margin: 0; padding: 0; background: #060B18; overflow: hidden; height: 100vh;">
   <div class="video-card fit-contain" id="popout-card" style="width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column;">
     <div class="video-header" style="padding: 12px 20px; flex-shrink: 0;">
-      <h2>📹 Doctor Camera</h2>
+      <h2>🩺 Doctor Camera</h2>
       <div class="video-controls">
         <button class="control-btn toggle-btn camera-btn" id="popout-camera-btn" type="button" title="Toggle Camera">
           <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2094,7 +2096,7 @@ function openPopoutWindow() {
 <body class="popout-body" style="margin: 0; padding: 0; background: #060B18; overflow: hidden; height: 100vh;">
   <div class="video-card fit-contain" id="popout-card" style="width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column;">
     <div class="video-header" style="padding: 12px 20px; flex-shrink: 0;">
-      <h2>🩺 Remote Ultrasound Feed</h2>
+      <h2>${PROBE_SVG} Remote Ultrasound Feed</h2>
       <div class="video-controls">
         <button class="control-btn toggle-btn camera-btn" id="popout-camera-btn" type="button" title="Toggle Camera">
           <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2410,7 +2412,7 @@ function openPatientPopoutWindow() {
 <body class="popout-body" style="margin: 0; padding: 0; background: #060B18; overflow: hidden; height: 100vh;">
   <div class="video-card fit-contain" id="popout-card" style="width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column;">
     <div class="video-header" style="padding: 12px 20px; flex-shrink: 0;">
-      <h2>🩺 Patient Camera</h2>
+      <h2>😷 Patient Camera</h2>
       <div class="video-controls">
         <button class="control-btn toggle-btn camera-btn" id="popout-camera-btn" type="button" title="Toggle Camera">
           <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
