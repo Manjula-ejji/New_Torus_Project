@@ -1146,15 +1146,16 @@ select {
 }
 
 .startup-logo {
-  width: 170px;
+  width: 560px; /* Increased by a further ~17% (to 560px) for maximum readability */
+  max-width: 100%;
   height: auto;
   object-fit: contain;
   background: rgba(17, 28, 47, 0.5);
   /* Premium glass effect */
   border: 1px solid rgba(255, 255, 255, 0.12);
   /* Thin border */
-  border-radius: 16px;
-  padding: 8px 18px;
+  border-radius: 28px;
+  padding: 16px 32px;
   display: block;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
