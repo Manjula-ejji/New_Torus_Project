@@ -38,7 +38,6 @@ let localTracks = {
 let popoutWindow = null;
 let doctorPopoutWindow = null;
 let patientPopoutWindow = null;
-const viewerPopoutWindows = new Map();
 
 // Store zoom and translation states for each video card container
 const zoomStates = new Map();
@@ -139,7 +138,7 @@ function updateCardOrders() {
     if (card.id === "local-card") {
       const localPopoutBtn = document.getElementById("local-popout-btn");
       if (localPopoutBtn) {
-        localPopoutBtn.style.display = "";
+        localPopoutBtn.style.display = (uid === 5001 || uid === 3001 || uid === 4001) ? "" : "none";
       }
     }
   });
@@ -484,8 +483,8 @@ if (localPopoutBtn) {
       openDoctorPopoutWindow();
     } else if (localUidVal === 5001) {
       openPopoutWindow();
-    } else {
-      openGenericPopoutWindow(localUidVal);
+    } else if (localUidVal === 4001) {
+      openPatientPopoutWindow();
     }
   });
 }
@@ -750,7 +749,7 @@ function createRemotePlayer(uid, videoTrack) {
       `;
       popoutBtn.addEventListener("click", openDoctorPopoutWindow);
       controls.appendChild(popoutBtn);
-    } else {
+    } else if (uid === 4001) {
       const popoutBtn = document.createElement("button");
       popoutBtn.className = "control-btn toggle-btn popout-btn";
       popoutBtn.type = "button";
@@ -762,7 +761,7 @@ function createRemotePlayer(uid, videoTrack) {
           <line x1="10" y1="14" x2="21" y2="3"></line>
         </svg>
       `;
-      popoutBtn.addEventListener("click", () => openGenericPopoutWindow(uid));
+      popoutBtn.addEventListener("click", openPatientPopoutWindow);
       controls.appendChild(popoutBtn);
     }
 
@@ -2209,11 +2208,6 @@ window.addEventListener("beforeunload", () => {
   if (patientPopoutWindow && !patientPopoutWindow.closed) {
     patientPopoutWindow.close();
   }
-  for (const win of viewerPopoutWindows.values()) {
-    if (win && !win.closed) {
-      win.close();
-    }
-  }
 });
 
 // Periodic synchronization loop
@@ -2227,39 +2221,33 @@ setInterval(() => {
     syncDoctorPopoutControls();
   }
   if (patientPopoutWindow && !patientPopoutWindow.closed) {
-    syncGenericPopoutPlayer(4001, patientPopoutWindow);
-    syncGenericPopoutControls(4001, patientPopoutWindow);
-  }
-  for (const [uid, win] of viewerPopoutWindows.entries()) {
-    if (win && !win.closed) {
-      syncGenericPopoutPlayer(uid, win);
-      syncGenericPopoutControls(uid, win);
-    }
+    syncPatientPopoutPlayer();
+    syncPatientPopoutControls();
   }
 }, 250);
 
 // ==========================================================================
-// GENERIC POP-OUT WINDOW LOGIC (FOR PATIENT & VIEWER CAMERA CARDS)
+// POP-OUT / NEW WINDOW PATIENT CAMERA LOGIC
 // ==========================================================================
 
-function getCardByUid(uid) {
-  const remoteCard = document.getElementById(`remote-card-${uid}`);
+function getPatientCard() {
+  const remoteCard = document.getElementById("remote-card-4001");
   if (remoteCard) return remoteCard;
   const localUidVal = uidInput.value.trim() ? Number(uidInput.value) : (roleInput.value === "patient" ? 4001 : 3001);
-  if (localUidVal === uid) {
+  if (localUidVal === 4001) {
     return document.getElementById("local-card");
   }
   return null;
 }
 
-function syncGenericPopoutPlayer(uid, popWindow) {
-  if (!popWindow || popWindow.closed) return;
+function syncPatientPopoutPlayer() {
+  if (!patientPopoutWindow || patientPopoutWindow.closed) return;
 
-  const popoutCard = popWindow.document.getElementById("popout-card");
-  const popoutPlayer = popWindow.document.getElementById("popout-player");
+  const popoutCard = patientPopoutWindow.document.getElementById("popout-card");
+  const popoutPlayer = patientPopoutWindow.document.getElementById("popout-player");
   if (!popoutCard || !popoutPlayer) return;
 
-  const parentCard = getCardByUid(uid);
+  const parentCard = getPatientCard();
   if (!parentCard) {
     // Show placeholder if card is not present
     if (!popoutPlayer.querySelector(".placeholder-container")) {
@@ -2281,7 +2269,7 @@ function syncGenericPopoutPlayer(uid, popWindow) {
     let childVideo = popoutPlayer.querySelector("video");
     if (!childVideo) {
       popoutPlayer.innerHTML = ""; // Clear placeholder
-      childVideo = popWindow.document.createElement("video");
+      childVideo = patientPopoutWindow.document.createElement("video");
       childVideo.autoplay = true;
       childVideo.playsInline = true;
       childVideo.muted = true;
@@ -2293,7 +2281,7 @@ function syncGenericPopoutPlayer(uid, popWindow) {
     // Only update srcObject if it has changed
     if (childVideo.srcObject !== parentVideo.srcObject) {
       childVideo.srcObject = parentVideo.srcObject;
-      childVideo.play().catch(err => console.error(`Error playing child video for UID ${uid}:`, err));
+      childVideo.play().catch(err => console.error("Error playing child Patient video:", err));
     }
 
     // Mirror zoom transformation classes and aspect ratios
@@ -2308,9 +2296,9 @@ function syncGenericPopoutPlayer(uid, popWindow) {
 
     // Apply exact zoom from parent to maintain zoom state initially or during parent zoom actions
     const parentZoom = zoomStates.get(parentCard.id);
-    const popoutZoom = zoomStates.get(`popout-card-${uid}`);
+    const popoutZoom = zoomStates.get("patient-popout-card");
     if (parentZoom && (!popoutZoom || popoutZoom.scale !== parentZoom.scale || popoutZoom.translateX !== parentZoom.translateX || popoutZoom.translateY !== parentZoom.translateY)) {
-      zoomStates.set(`popout-card-${uid}`, { ...parentZoom });
+      zoomStates.set("patient-popout-card", { ...parentZoom });
       applyZoomTransform(popoutCard, popoutPlayer);
     }
   } else {
@@ -2326,18 +2314,18 @@ function syncGenericPopoutPlayer(uid, popWindow) {
   }
 }
 
-function syncGenericPopoutControls(uid, popWindow) {
-  if (!popWindow || popWindow.closed) return;
+function syncPatientPopoutControls() {
+  if (!patientPopoutWindow || patientPopoutWindow.closed) return;
 
-  const parentCard = getCardByUid(uid);
+  const parentCard = getPatientCard();
   if (!parentCard) return;
 
-  const popoutCard = popWindow.document.getElementById("popout-card");
+  const popoutCard = patientPopoutWindow.document.getElementById("popout-card");
   if (!popoutCard) return;
 
   // Sync Camera button state
   const parentCamBtn = parentCard.querySelector(".camera-btn");
-  const childCamBtn = popWindow.document.getElementById("popout-camera-btn");
+  const childCamBtn = patientPopoutWindow.document.getElementById("popout-camera-btn");
   if (parentCamBtn && childCamBtn) {
     childCamBtn.disabled = parentCamBtn.disabled;
     if (parentCamBtn.classList.contains("active")) {
@@ -2353,7 +2341,7 @@ function syncGenericPopoutControls(uid, popWindow) {
 
   // Sync Mic (Mute) button state
   const parentMicBtn = parentCard.querySelector(".mic-btn");
-  const childMicBtn = popWindow.document.getElementById("popout-mic-btn");
+  const childMicBtn = patientPopoutWindow.document.getElementById("popout-mic-btn");
   if (parentMicBtn && childMicBtn) {
     childMicBtn.disabled = parentMicBtn.disabled;
     if (parentMicBtn.classList.contains("active")) {
@@ -2368,7 +2356,7 @@ function syncGenericPopoutControls(uid, popWindow) {
   }
 
   // Sync Fit button text and active state
-  const childFitBtn = popWindow.document.getElementById("popout-fit-btn");
+  const childFitBtn = patientPopoutWindow.document.getElementById("popout-fit-btn");
   if (childFitBtn) {
     if (parentCard.classList.contains("fit-contain")) {
       popoutCard.classList.remove("fit-cover");
@@ -2384,7 +2372,7 @@ function syncGenericPopoutControls(uid, popWindow) {
   }
 
   // Sync Focus button state
-  const childPinBtn = popWindow.document.getElementById("popout-pin-btn");
+  const childPinBtn = patientPopoutWindow.document.getElementById("popout-pin-btn");
   if (childPinBtn) {
     if (parentCard.classList.contains("pinned")) {
       popoutCard.classList.add("pinned");
@@ -2398,59 +2386,31 @@ function syncGenericPopoutControls(uid, popWindow) {
   }
 }
 
-function openGenericPopoutWindow(uid) {
-  let popWindow = null;
-  let windowName = "";
-  let titleText = "";
-  let h2Text = "";
-
-  if (uid === 4001) {
-    if (patientPopoutWindow && !patientPopoutWindow.closed) {
-      patientPopoutWindow.focus();
-      return;
-    }
-    windowName = "PatientPopout";
-    titleText = "Patient Camera";
-    h2Text = "🩺 Patient Camera";
-  } else {
-    if (viewerPopoutWindows.has(uid)) {
-      const existingWin = viewerPopoutWindows.get(uid);
-      if (existingWin && !existingWin.closed) {
-        existingWin.focus();
-        return;
-      }
-    }
-    const viewerNum = getViewerNumber(uid);
-    windowName = `ViewerPopout_${uid}`;
-    titleText = `Viewer ${viewerNum} Camera`;
-    h2Text = `👤 Viewer ${viewerNum} Camera`;
-  }
-
-  popWindow = window.open("", windowName, "width=1024,height=768,menubar=no,toolbar=no,location=no,status=no");
-  if (!popWindow) {
-    alert(`Popup blocked! Please allow popups for this page to view the popout for ${titleText}.`);
+function openPatientPopoutWindow() {
+  if (patientPopoutWindow && !patientPopoutWindow.closed) {
+    patientPopoutWindow.focus();
     return;
   }
 
-  if (uid === 4001) {
-    patientPopoutWindow = popWindow;
-  } else {
-    viewerPopoutWindows.set(uid, popWindow);
+  patientPopoutWindow = window.open("", "PatientPopout", "width=1024,height=768,menubar=no,toolbar=no,location=no,status=no");
+  if (!patientPopoutWindow) {
+    alert("Popup blocked! Please allow popups for this page to view the popout patient camera feed.");
+    return;
   }
 
-  const doc = popWindow.document;
+  const doc = patientPopoutWindow.document;
   doc.open();
   doc.write(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>${titleText}</title>
+  <title>Patient Camera</title>
 </head>
 <body class="popout-body" style="margin: 0; padding: 0; background: #060B18; overflow: hidden; height: 100vh;">
   <div class="video-card fit-contain" id="popout-card" style="width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column;">
     <div class="video-header" style="padding: 12px 20px; flex-shrink: 0;">
-      <h2>${h2Text}</h2>
+      <h2>🩺 Patient Camera</h2>
       <div class="video-controls">
         <button class="control-btn toggle-btn camera-btn" id="popout-camera-btn" type="button" title="Toggle Camera">
           <svg class="icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2505,7 +2465,7 @@ function openGenericPopoutWindow(uid) {
   setupZoomAndPan(popoutCard, popoutPlayer);
 
   doc.getElementById("popout-camera-btn").addEventListener("click", () => {
-    const parentCard = getCardByUid(uid);
+    const parentCard = getPatientCard();
     if (parentCard) {
       const btn = parentCard.querySelector(".camera-btn");
       if (btn) btn.click();
@@ -2513,7 +2473,7 @@ function openGenericPopoutWindow(uid) {
   });
 
   doc.getElementById("popout-mic-btn").addEventListener("click", () => {
-    const parentCard = getCardByUid(uid);
+    const parentCard = getPatientCard();
     if (parentCard) {
       const btn = parentCard.querySelector(".mic-btn");
       if (btn) btn.click();
@@ -2534,20 +2494,16 @@ function openGenericPopoutWindow(uid) {
   });
 
   doc.getElementById("popout-pin-btn").addEventListener("click", () => {
-    const parentCard = getCardByUid(uid);
+    const parentCard = getPatientCard();
     if (parentCard) {
       togglePin(parentCard);
     }
   });
 
-  syncGenericPopoutPlayer(uid, popWindow);
-  syncGenericPopoutControls(uid, popWindow);
+  syncPatientPopoutPlayer();
+  syncPatientPopoutControls();
 
-  popWindow.addEventListener("unload", () => {
-    if (uid === 4001) {
-      patientPopoutWindow = null;
-    } else {
-      viewerPopoutWindows.delete(uid);
-    }
+  patientPopoutWindow.addEventListener("unload", () => {
+    patientPopoutWindow = null;
   });
 }
