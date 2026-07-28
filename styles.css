@@ -155,32 +155,29 @@ body::after {
 }
 
 .header-logo {
-  height: 94px;
-  /* Reduced height by ~29% for a low-profile look */
-  width: 532px;
-  /* Increased width by ~48% to extend close to the title */
-  object-fit: fill;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 4px 16px;
-  /* Low-profile padding for horizontal layout */
-  margin-top: -11px;
-  /* Keep computed header height exactly 104px */
-  margin-bottom: -11px;
-  /* Keep computed header height exactly 104px */
+  height: 104px;
+  width: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-top-left-radius: 24px;
+  border-bottom-left-radius: 24px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 0;
+  overflow: hidden;
+  margin-top: -16px; /* Offset header top padding */
+  margin-bottom: -16px; /* Offset header bottom padding */
+  margin-left: -28px; /* Offset header left padding */
   display: block;
-  animation: logo-float 5s ease-in-out infinite, logo-glow-breath 4.5s ease-in-out infinite;
   transition: all 0.3s ease;
 }
 
 .header-logo:hover {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 25px rgba(139, 92, 246, 0.3);
+  border-right-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 @keyframes logo-float {
@@ -770,6 +767,8 @@ body::after {
 .player,
 .remote-player {
   width: 100%;
+  max-width: 570px;
+  margin: 0 auto;
   height: 350px;
   flex: 1 1 auto;
   border-radius: 18px;
@@ -798,6 +797,22 @@ body::after {
 .video-card.fit-cover video {
   object-fit: cover !important;
 }
+
+/* Dynamic Aspect Ratio Support */
+.video-card.has-aspect .player,
+.video-card.has-aspect .remote-player {
+  aspect-ratio: var(--video-aspect);
+  height: auto;
+}
+
+.video-card.pinned.has-aspect .player,
+.video-card.pinned.has-aspect .remote-player {
+  height: auto;
+  max-height: 70vh;
+  aspect-ratio: var(--video-aspect);
+}
+
+
 
 /* Responsive adjustment */
 @media (max-width: 820px) {
@@ -1156,13 +1171,15 @@ select {
   /* Increased by a further ~17% (to 560px) for maximum readability */
   max-width: 100%;
   height: auto;
-  object-fit: contain;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
   background: rgba(17, 28, 47, 0.5);
   /* Premium glass effect */
   border: 1px solid rgba(255, 255, 255, 0.12);
   /* Thin border */
   border-radius: 28px;
-  padding: 16px 32px;
+  padding: 0;
+  overflow: hidden;
   display: block;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);

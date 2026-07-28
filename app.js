@@ -77,26 +77,60 @@ function updateCardOrders() {
   viewersInCall.sort((a, b) => getViewerNumber(a) - getViewerNumber(b));
 
   const displayList = [];
+  const currentRole = roleInput.value;
 
-  // 1. Ultrasound Feed
-  if (joinOrder.includes(5001)) {
-    displayList.push(5001);
-  }
-  // 2. Viewer 1
-  if (viewersInCall.length > 0) {
-    displayList.push(viewersInCall[0]);
-  }
-  // 3. Patient Camera
-  if (joinOrder.includes(4001)) {
-    displayList.push(4001);
-  }
-  // 4. Doctor Camera
-  if (joinOrder.includes(3001)) {
-    displayList.push(3001);
-  }
-  // 5. Rest of the viewers (Viewer 2, Viewer 3, ...)
-  for (let i = 1; i < viewersInCall.length; i++) {
-    displayList.push(viewersInCall[i]);
+  if (currentRole === "doctor") {
+    // 1. Ultrasound Feed
+    if (joinOrder.includes(5001)) {
+      displayList.push(5001);
+    }
+    // 2. Patient Camera
+    if (joinOrder.includes(4001)) {
+      displayList.push(4001);
+    }
+    // 3. Doctor Camera (self-view)
+    if (joinOrder.includes(3001)) {
+      displayList.push(3001);
+    }
+    // 4. Viewers
+    for (const viewerUid of viewersInCall) {
+      displayList.push(viewerUid);
+    }
+  } else if (currentRole === "patient") {
+    // 1. Ultrasound Feed
+    if (joinOrder.includes(5001)) {
+      displayList.push(5001);
+    }
+    // 2. Doctor Camera
+    if (joinOrder.includes(3001)) {
+      displayList.push(3001);
+    }
+    // 3. Patient Camera (self-view)
+    if (joinOrder.includes(4001)) {
+      displayList.push(4001);
+    }
+    // 4. Viewers
+    for (const viewerUid of viewersInCall) {
+      displayList.push(viewerUid);
+    }
+  } else {
+    // Viewer Mode layout
+    // 1. Ultrasound Feed
+    if (joinOrder.includes(5001)) {
+      displayList.push(5001);
+    }
+    // 2. Patient Camera
+    if (joinOrder.includes(4001)) {
+      displayList.push(4001);
+    }
+    // 3. Doctor Camera
+    if (joinOrder.includes(3001)) {
+      displayList.push(3001);
+    }
+    // 4. Viewers
+    for (const viewerUid of viewersInCall) {
+      displayList.push(viewerUid);
+    }
   }
 
   // Update card elements' style order and titles
@@ -450,24 +484,38 @@ function togglePin(card) {
   updateCardOrders();
 }
 
-// Inspects the video track and sets the CSS --video-aspect ratio dynamically
+// Inspects the HTML5 <video> element inside the player container and sets the CSS --video-aspect ratio dynamically
 function applyTrackAspectRatio(card, videoTrack) {
-  try {
-    if (!videoTrack) return;
-    const mediaTrack = videoTrack.getMediaStreamTrack();
-    if (mediaTrack) {
-      const settings = mediaTrack.getSettings();
-      if (settings && settings.width && settings.height) {
-        const ratio = settings.width / settings.height;
+  if (!videoTrack) return;
+  
+  let attempts = 0;
+  const maxAttempts = 30; // Try for up to 6 seconds (30 * 200ms)
+  
+  const checkVideoDimensions = () => {
+    try {
+      const video = card.querySelector("video");
+      if (video && video.videoWidth > 0 && video.videoHeight > 0) {
+        const ratio = video.videoWidth / video.videoHeight;
         card.style.setProperty("--video-aspect", ratio);
         card.classList.add("has-aspect");
-        console.log(`Applied aspect ratio of ${ratio} (${settings.width}x${settings.height}) to card ${card.id}`);
+        console.log(`Applied aspect ratio of ${ratio} (${video.videoWidth}x${video.videoHeight}) to card ${card.id} after ${attempts} attempts`);
+        return;
       }
+    } catch (err) {
+      console.warn("Failed to retrieve or apply video element aspect ratio:", err);
     }
-  } catch (err) {
-    console.warn("Failed to retrieve or apply track aspect ratio settings:", err);
-  }
+    
+    attempts++;
+    if (attempts < maxAttempts) {
+      setTimeout(checkVideoDimensions, 200);
+    } else {
+      console.warn(`Could not retrieve video element dimensions for card ${card.id} (timed out)`);
+    }
+  };
+  
+  checkVideoDimensions();
 }
+
 
 // Setup local card listeners
 localFitBtn.addEventListener("click", () => {
