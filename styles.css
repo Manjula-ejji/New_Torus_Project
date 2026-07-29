@@ -160,9 +160,10 @@ body::after {
   object-fit: contain;
   background: transparent;
   border: none;
-  margin-left: 12px;
+  margin-left: 24px;
   display: block;
   transition: all 0.3s ease;
+  mix-blend-mode: multiply;
 }
 
 .header-logo:hover {
