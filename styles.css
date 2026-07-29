@@ -155,32 +155,18 @@ body::after {
 }
 
 .header-logo {
-  height: 104px;
+  height: 84px;
   width: auto;
-  aspect-ratio: 3 / 1;
-  object-fit: cover;
+  object-fit: contain;
   background: transparent;
   border: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  border-top-left-radius: 24px;
-  border-bottom-left-radius: 24px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  padding: 0;
-  overflow: hidden;
-  margin-top: -16px;
-  /* Offset header top padding */
-  margin-bottom: -16px;
-  /* Offset header bottom padding */
-  margin-left: -28px;
-  /* Offset header left padding */
+  margin-left: 12px;
   display: block;
   transition: all 0.3s ease;
 }
 
 .header-logo:hover {
-  border-right-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.02);
+  opacity: 0.9;
 }
 
 @keyframes logo-float {
