@@ -700,6 +700,8 @@ body::after {
     0 0 35px rgba(139, 92, 246, 0.2),
     0 24px 50px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  height: calc(100vh - 200px);
+  min-height: 550px;
 }
 
 .video-header {
@@ -815,23 +817,46 @@ body::after {
   aspect-ratio: var(--video-aspect);
 }
 
-/* Fit Mode Layout adjustments to use entire available viewer panel */
-.video-card.fit-contain .player,
-.video-card.fit-contain .remote-player {
-  max-width: none !important;
-  max-height: none !important;
+/* Ensure Agora wrapper and video elements stretch to fill the player container */
+.player > div,
+.remote-player > div,
+.player video,
+.remote-player video {
   width: 100% !important;
   height: 100% !important;
+}
+
+/* Maximize video container in fit-contain, fit-cover, or pinned states */
+.video-card.pinned .player,
+.video-card.pinned .remote-player,
+.video-card.fit-contain .player,
+.video-card.fit-contain .remote-player,
+.video-card.fit-cover .player,
+.video-card.fit-cover .remote-player {
+  max-width: none !important;
+  max-height: none !important;
+  width: calc(100% + 48px) !important; /* Stretch edge-to-edge horizontally */
+  height: calc(100% + 24px) !important; /* Stretch to bottom edge of card */
+  margin-left: -24px !important;
+  margin-right: -24px !important;
+  margin-bottom: -24px !important;
   flex: 1 1 auto !important;
   aspect-ratio: auto !important;
   min-height: 350px;
+  border: none !important; /* Remove borders to prevent double lines */
+  border-bottom-left-radius: 25px; /* Match card rounded corners */
+  border-bottom-right-radius: 25px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  overflow: hidden;
 }
 
 .video-card.pinned.fit-contain .player,
-.video-card.pinned.fit-contain .remote-player {
-  min-height: 540px;
+.video-card.pinned.fit-contain .remote-player,
+.video-card.pinned.fit-cover .player,
+.video-card.pinned.fit-cover .remote-player {
+  min-height: 500px;
 }
-
 /* Responsive adjustment */
 @media (max-width: 820px) {
   .videos-grid {
@@ -842,11 +867,6 @@ body::after {
   .video-card.pinned .player,
   .video-card.pinned .remote-player {
     height: 390px;
-  }
-
-  .video-card.pinned.fit-contain .player,
-  .video-card.pinned.fit-contain .remote-player {
-    min-height: 390px;
   }
 }
 

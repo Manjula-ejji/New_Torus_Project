@@ -487,10 +487,10 @@ function togglePin(card) {
 // Inspects the HTML5 <video> element inside the player container and sets the CSS --video-aspect ratio dynamically
 function applyTrackAspectRatio(card, videoTrack) {
   if (!videoTrack) return;
-  
+
   let attempts = 0;
   const maxAttempts = 30; // Try for up to 6 seconds (30 * 200ms)
-  
+
   const checkVideoDimensions = () => {
     try {
       const video = card.querySelector("video");
@@ -504,7 +504,7 @@ function applyTrackAspectRatio(card, videoTrack) {
     } catch (err) {
       console.warn("Failed to retrieve or apply video element aspect ratio:", err);
     }
-    
+
     attempts++;
     if (attempts < maxAttempts) {
       setTimeout(checkVideoDimensions, 200);
@@ -512,7 +512,7 @@ function applyTrackAspectRatio(card, videoTrack) {
       console.warn(`Could not retrieve video element dimensions for card ${card.id} (timed out)`);
     }
   };
-  
+
   checkVideoDimensions();
 }
 
