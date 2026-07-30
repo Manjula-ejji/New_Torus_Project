@@ -813,36 +813,59 @@ body::after {
   height: 100% !important;
 }
 
-/* Maximize video container in fit-contain, fit-cover, or pinned states */
-.video-card.pinned .player,
-.video-card.pinned .remote-player,
+/* Card and Player layout systems for Fit vs Fill modes */
+
+/* Fit Mode (Contain) - Resize the entire viewer card container to match video aspect ratio */
+.video-card.fit-contain {
+  width: fit-content !important;
+  height: fit-content !important;
+  justify-self: center;
+}
+
 .video-card.fit-contain .player,
-.video-card.fit-contain .remote-player,
-.video-card.fit-cover .player,
-.video-card.fit-cover .remote-player {
+.video-card.fit-contain .remote-player {
+  height: 350px !important;
+  aspect-ratio: var(--video-aspect) !important;
+  width: auto !important;
   max-width: none !important;
   max-height: none !important;
-  width: calc(100% + 48px) !important; /* Stretch edge-to-edge horizontally */
-  height: calc(100% + 24px) !important; /* Stretch to bottom edge of card */
-  margin-left: -24px !important;
-  margin-right: -24px !important;
-  margin-bottom: -24px !important;
-  flex: 1 1 auto !important;
-  aspect-ratio: auto !important;
-  min-height: 350px;
-  border: none !important; /* Remove borders to prevent double lines */
-  border-bottom-left-radius: 25px; /* Match card rounded corners */
-  border-bottom-right-radius: 25px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  overflow: hidden;
+  margin: 0 !important;
+  border: none !important;
 }
 
 .video-card.pinned.fit-contain .player,
-.video-card.pinned.fit-contain .remote-player,
+.video-card.pinned.fit-contain .remote-player {
+  height: calc(100vh - 280px) !important;
+  min-height: 450px !important;
+  aspect-ratio: var(--video-aspect) !important;
+  width: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Fill Mode (Cover) - Card spans full width, video covers the card */
+.video-card.fit-cover {
+  width: 100% !important;
+}
+
+.video-card.pinned.fit-cover {
+  height: calc(100vh - 200px) !important;
+  min-height: 550px;
+}
+
+.video-card.fit-cover .player,
+.video-card.fit-cover .remote-player,
 .video-card.pinned.fit-cover .player,
 .video-card.pinned.fit-cover .remote-player {
-  min-height: 500px;
+  max-width: none !important;
+  max-height: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 1 auto !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
 }
 /* Responsive adjustment */
 @media (max-width: 820px) {
