@@ -899,6 +899,8 @@ body::after {
   letter-spacing: 0.5px;
 }
 
+.player > div,
+.remote-player > div,
 .player video,
 .remote-player video {
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -906,6 +908,8 @@ body::after {
   touch-action: none;
 }
 
+.player.dragging > div,
+.remote-player.dragging > div,
 .player.dragging video,
 .remote-player.dragging video {
   transition: none !important;

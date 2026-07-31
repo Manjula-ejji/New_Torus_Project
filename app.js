@@ -321,8 +321,11 @@ function applyZoomTransform(card, playerEl) {
     zoomStates.set(card.id, state);
   }
 
-  video.style.transformOrigin = "center center";
-  video.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})`;
+  // Target Agora's wrapper div if present, otherwise fall back to video (useful for popouts)
+  const target = (video.parentElement && video.parentElement !== playerEl) ? video.parentElement : video;
+
+  target.style.transformOrigin = "center center";
+  target.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})`;
 
   // Manage floating Zoom Indicator overlay
   let indicator = playerEl.querySelector(".zoom-indicator");
@@ -339,6 +342,8 @@ function applyZoomTransform(card, playerEl) {
       indicator.remove();
     }
     playerEl.style.cursor = "default";
+    // Clean up inline styles when zoomed out
+    target.style.transform = "";
   }
 }
 
