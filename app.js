@@ -321,11 +321,55 @@ function applyZoomTransform(card, playerEl) {
     zoomStates.set(card.id, state);
   }
 
-  // Target Agora's wrapper div if present, otherwise fall back to video (useful for popouts)
-  const target = (video.parentElement && video.parentElement !== playerEl) ? video.parentElement : video;
+  // Detect mirroring once when first encountered
+  if (state.isMirrored === undefined) {
+    const currentTransform = video.style.transform || "";
+    state.isMirrored = currentTransform.includes("scaleX(-1)") || currentTransform.includes("rotateY(180deg)") || currentTransform.includes("matrix(-1");
+  }
+
+  // Ensure overflow: hidden is applied to the viewer container and parent wrapper
+  playerEl.style.overflow = "hidden";
+  if (video.parentElement) {
+    video.parentElement.style.overflow = "hidden";
+  }
+
+  // Force object-fit: cover when zoomed to ensure the video always covers the container
+  if (state.scale > 1.0) {
+    video.style.setProperty("object-fit", "cover", "important");
+  } else {
+    // Restore default fit mode based on card class
+    if (card.classList.contains("fit-contain")) {
+      video.style.setProperty("object-fit", "contain", "important");
+    } else {
+      video.style.setProperty("object-fit", "cover", "important");
+    }
+  }
+
+  // Reset transforms on any parent wrapper div that might have been modified
+  if (video.parentElement && video.parentElement !== playerEl) {
+    video.parentElement.style.transform = "";
+  }
+
+  // Target the video element directly as requested by the user
+  const target = video;
 
   target.style.transformOrigin = "center center";
-  target.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})`;
+
+  // Calculate clamp boundaries based on container size
+  const rect = playerEl.getBoundingClientRect();
+  const W = rect.width || playerEl.clientWidth || 570;
+  const H = rect.height || playerEl.clientHeight || 350;
+
+  const maxTranslateX = Math.max(0, ((state.scale - 1) * W) / 2);
+  const maxTranslateY = Math.max(0, ((state.scale - 1) * H) / 2);
+
+  // Clamp translations to prevent exposing empty black/grey regions
+  state.translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, state.translateX));
+  state.translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, state.translateY));
+
+  // Build transform string: scale first, translate, then preserve mirroring at the end
+  const mirrorPart = state.isMirrored ? " scaleX(-1)" : "";
+  target.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})${mirrorPart}`;
 
   // Manage floating Zoom Indicator overlay
   let indicator = playerEl.querySelector(".zoom-indicator");
@@ -342,8 +386,8 @@ function applyZoomTransform(card, playerEl) {
       indicator.remove();
     }
     playerEl.style.cursor = "default";
-    // Clean up inline styles when zoomed out
-    target.style.transform = "";
+    // Reset transform when completely zoomed out to 1.0
+    target.style.transform = state.isMirrored ? "scaleX(-1)" : "";
   }
 }
 
