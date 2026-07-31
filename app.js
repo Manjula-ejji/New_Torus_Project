@@ -310,7 +310,7 @@ function getVideoElement(playerEl) {
   return playerEl.querySelector("video");
 }
 
-// Applies scale and translation transforms dynamically to the HTML5 video element
+// Applies scale and translation transforms dynamically directly to the HTML5 video element
 function applyZoomTransform(card, playerEl) {
   const video = getVideoElement(playerEl);
   if (!video) return;
@@ -321,73 +321,33 @@ function applyZoomTransform(card, playerEl) {
     zoomStates.set(card.id, state);
   }
 
-  // Detect mirroring once when first encountered
-  if (state.isMirrored === undefined) {
-    const currentTransform = video.style.transform || "";
-    state.isMirrored = currentTransform.includes("scaleX(-1)") || currentTransform.includes("rotateY(180deg)") || currentTransform.includes("matrix(-1");
+  // Save the video element's initial transform (e.g. Agora's scaleX(-1) mirror transform) to preserve mirroring
+  if (state.initialTransform === undefined) {
+    state.initialTransform = video.style.transform || "";
   }
 
-  // Ensure overflow: hidden is applied to the viewer container and parent wrapper
-  playerEl.style.overflow = "hidden";
-  if (video.parentElement) {
-    video.parentElement.style.overflow = "hidden";
-  }
-
-  // Force object-fit: cover when zoomed to ensure the video always covers the container
-  if (state.scale > 1.0) {
-    video.style.setProperty("object-fit", "cover", "important");
-  } else {
-    // Restore default fit mode based on card class
-    if (card.classList.contains("fit-contain")) {
-      video.style.setProperty("object-fit", "contain", "important");
-    } else {
-      video.style.setProperty("object-fit", "cover", "important");
-    }
-  }
-
-  // Reset transforms on any parent wrapper div that might have been modified
-  if (video.parentElement && video.parentElement !== playerEl) {
-    video.parentElement.style.transform = "";
-  }
-
-  // Target the video element directly as requested by the user
-  const target = video;
-
-  target.style.transformOrigin = "center center";
-
-  // Calculate clamp boundaries based on container size
+  // Recalculate zoom constraints based on container dimensions
   const rect = playerEl.getBoundingClientRect();
-  const W = rect.width || playerEl.clientWidth || 570;
-  const H = rect.height || playerEl.clientHeight || 350;
+  const W_c = rect.width;
+  const H_c = rect.height;
 
-  const maxTranslateX = Math.max(0, ((state.scale - 1) * W) / 2);
-  const maxTranslateY = Math.max(0, ((state.scale - 1) * H) / 2);
+  if (W_c > 0 && H_c > 0) {
+    const maxTranslateX = Math.max(0, (state.scale * W_c - W_c) / 2);
+    const maxTranslateY = Math.max(0, (state.scale * H_c - H_c) / 2);
 
-  // Clamp translations to prevent exposing empty black/grey regions
-  state.translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, state.translateX));
-  state.translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, state.translateY));
+    state.translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, state.translateX));
+    state.translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, state.translateY));
+  }
 
-  // Build transform string: scale first, translate, then preserve mirroring at the end
-  const mirrorPart = state.isMirrored ? " scaleX(-1)" : "";
-  target.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})${mirrorPart}`;
+  // Apply transform strictly to the video element, combining scale/translation with the initial mirror transform
+  video.style.transformOrigin = "center center";
+  video.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale}) ${state.initialTransform}`;
 
-  // Manage floating Zoom Indicator overlay
-  let indicator = playerEl.querySelector(".zoom-indicator");
+  // Make sure layout constraints on the video element itself are default, but pointer cursors update
   if (state.scale > 1.0) {
-    if (!indicator) {
-      indicator = document.createElement("div");
-      indicator.className = "zoom-indicator";
-      playerEl.appendChild(indicator);
-    }
-    indicator.textContent = `${state.scale.toFixed(2)}x Zoom (Drag to Pan)`;
     playerEl.style.cursor = "grab";
   } else {
-    if (indicator) {
-      indicator.remove();
-    }
     playerEl.style.cursor = "default";
-    // Reset transform when completely zoomed out to 1.0
-    target.style.transform = state.isMirrored ? "scaleX(-1)" : "";
   }
 }
 
@@ -404,16 +364,6 @@ function adjustZoom(card, playerEl, delta) {
   if (state.scale === 1.0) {
     state.translateX = 0;
     state.translateY = 0;
-  } else {
-    // If zoom level changes, ensure current panning doesn't reveal empty black gutters
-    const rect = playerEl.getBoundingClientRect();
-    const W = rect.width;
-    const H = rect.height;
-    const maxTranslateX = ((state.scale - 1) * W) / 2;
-    const maxTranslateY = ((state.scale - 1) * H) / 2;
-
-    state.translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, state.translateX));
-    state.translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, state.translateY));
   }
 
   applyZoomTransform(card, playerEl);
@@ -462,14 +412,8 @@ function setupZoomAndPan(card, playerEl) {
     const dx = e.clientX - state.startX;
     const dy = e.clientY - state.startY;
 
-    const rect = playerEl.getBoundingClientRect();
-    const W = rect.width;
-    const H = rect.height;
-    const maxTranslateX = ((state.scale - 1) * W) / 2;
-    const maxTranslateY = ((state.scale - 1) * H) / 2;
-
-    state.translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, state.currentX + dx));
-    state.translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, state.currentY + dy));
+    state.translateX = state.currentX + dx;
+    state.translateY = state.currentY + dy;
 
     applyZoomTransform(card, playerEl);
   });
@@ -486,6 +430,21 @@ function setupZoomAndPan(card, playerEl) {
 
   playerEl.addEventListener("pointerup", handleDragEnd);
   playerEl.addEventListener("pointercancel", handleDragEnd);
+
+  // Set up ResizeObserver to dynamically adjust video layout when player dimensions change
+  let lastW = 0;
+  let lastH = 0;
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+      const { width, height } = entry.contentRect;
+      if (Math.abs(width - lastW) > 0.5 || Math.abs(height - lastH) > 0.5) {
+        lastW = width;
+        lastH = height;
+        applyZoomTransform(card, playerEl);
+      }
+    }
+  });
+  resizeObserver.observe(playerEl);
 }
 
 // Toggles Fit mode (Fit vs Fill)
