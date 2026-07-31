@@ -53,7 +53,88 @@
   <main class="app" id="app-dashboard" style="display: none;">
     <header class="app-header">
       <div class="header-left">
-        <img src="logo.png?v=2" alt="PlebC Logo" class="header-logo">
+        <!-- Robotic Machine Overlay -->
+        <div class="robot-container">
+          <svg class="torus-robotic-machine" viewBox="0 0 200 220" width="70" height="77" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Sleek Base Shadow -->
+            <ellipse cx="60" cy="205" rx="35" ry="6" fill="rgba(0, 240, 255, 0.15)" filter="blur(3px)" />
+            <!-- Robotic Base (Mobile Cart) -->
+            <g class="robot-base">
+              <!-- Dark metal body panels -->
+              <rect x="25" y="145" width="70" height="50" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
+              <!-- Glowing blue stripe/panel -->
+              <rect x="35" y="157" width="50" height="14" rx="4" fill="rgba(15, 23, 42, 0.9)" stroke="#00f0ff" stroke-width="1.5" class="base-panel-glow"/>
+              <!-- Tech detail inside panel -->
+              <path d="M40 164 L50 160 L60 168 L70 164 L80 164" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="base-panel-sine"/>
+              <!-- Dark wheels -->
+              <circle cx="40" cy="200" r="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+              <circle cx="40" cy="200" r="3" fill="#00f0ff"/>
+              <circle cx="80" cy="200" r="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+              <circle cx="80" cy="200" r="3" fill="#00f0ff"/>
+            </g>
+            <!-- Robotic Arm Structure -->
+            <!-- Base Joint (Shoulder) -->
+            <circle cx="60" cy="140" r="9" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+            <circle cx="60" cy="140" r="4" fill="#38bdf8"/>
+            
+            <!-- Shoulder Linkage (rotates) -->
+            <g class="robot-arm-shoulder">
+              <!-- Lower arm segment -->
+              <rect x="56" y="80" width="8" height="60" rx="4" fill="#334155" stroke="#475569" stroke-width="1.5" transform="rotate(-15 60 140)"/>
+              <line x1="60" y1="85" x2="60" y2="135" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2"/>
+              
+              <!-- Elbow Joint -->
+              <g class="robot-arm-elbow" transform="translate(60, 80)">
+                <circle cx="0" cy="0" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+                <circle cx="0" cy="0" r="3" fill="#38bdf8"/>
+                
+                <!-- Upper arm segment (rotates) -->
+                <g class="robot-arm-forearm">
+                  <rect x="-4" y="-50" width="8" height="50" rx="4" fill="#475569" stroke="#64748b" stroke-width="1.5"/>
+                  <line x1="0" y1="-5" x2="0" y2="-45" stroke="#00f0ff" stroke-width="1" stroke-dasharray="2,2"/>
+                  
+                  <!-- Wrist Joint & Ultrasound Probe (rotates) -->
+                  <g class="robot-arm-wrist" transform="translate(0, -50)">
+                    <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+                    <!-- Linkage connector -->
+                    <path d="M-3 -5 L3 -5 L5 -12 L-5 -12 Z" fill="#334155"/>
+                    <!-- Probe structure -->
+                    <g class="ultrasound-probe">
+                      <path d="M-8 -12 L8 -12 L6 -22 L-6 -22 Z" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5"/>
+                      <!-- Probe handle sensor strip -->
+                      <rect x="-2" y="-19" width="4" height="5" fill="#38bdf8"/>
+                      <!-- Laser emitter plate -->
+                      <ellipse cx="0" cy="-22" rx="6" ry="2" fill="#00f0ff"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Header Logo Card Container -->
+        <div class="header-logo-card">
+          <!-- Glass reflection / specular overlay -->
+          <div class="logo-card-glass-specular"></div>
+          <!-- Shine sweep overlay -->
+          <div class="logo-card-shine"></div>
+          <!-- Divider line overlays -->
+          <div class="logo-divider" style="left: 33.33%;"></div>
+          <div class="logo-divider" style="left: 66.67%;"></div>
+          
+          <img src="logo.png?v=2" alt="PlebC Logo" class="header-logo">
+          
+          <!-- Laser Scan Beam overlay -->
+          <div class="scan-beam"></div>
+          
+          <!-- Tooltip overlay -->
+          <div class="logo-tooltip">
+            <div class="tooltip-line title">PlebC</div>
+            <div class="tooltip-line subtitle">In Collaboration with DRISHTI CPS Foundation</div>
+            <div class="tooltip-line partner">Institutional Partner – IIT Indore</div>
+          </div>
+        </div>
       </div>
       <div class="header-center">
         <h1 class="hero-title">TORUS</h1>
@@ -62,6 +143,21 @@
       </div>
       <div class="header-right">
         <div class="header-row">
+          <button id="controlsBtn" class="header-btn" title="OpenSonics Control Panel" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="2" y1="14" x2="6" y2="14"></line>
+              <line x1="10" y1="8" x2="14" y2="8"></line>
+              <line x1="18" y1="16" x2="22" y2="16"></line>
+            </svg>
+            <span>Controls</span>
+          </button>
           <button id="settingsBtn" class="header-btn" title="Agora Settings" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
@@ -157,6 +253,239 @@
         <div class="modal-footer">
           <button id="cancelSettingsBtn" class="btn btn-secondary" type="button">Cancel</button>
           <button id="saveSettingsBtn" class="btn btn-primary" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Modal Popup (OpenSonics Control Panel) -->
+    <div id="controlsModal" class="modal-overlay">
+      <div class="controls-modal-content">
+        <!-- Windows 11 style window bar header -->
+        <div class="controls-modal-header">
+          <div class="controls-modal-logo-group">
+            <div class="controls-window-icon-wrapper">
+              <span class="win-icon-capsule win-icon-orange"></span>
+              <span class="win-icon-capsule win-icon-blue"></span>
+            </div>
+          </div>
+          <div class="controls-modal-win-controls">
+            <button id="minimizeControlsBtn" class="controls-win-btn win-minimize" type="button" title="Minimize">
+              <svg width="10" height="1" viewBox="0 0 10 1" fill="currentColor">
+                <rect width="10" height="1" />
+              </svg>
+            </button>
+            <button id="closeControlsBtn" class="controls-win-btn win-close" type="button" title="Close">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+                <line x1="1" y1="1" x2="9" y2="9" />
+                <line x1="9" y1="1" x2="1" y2="9" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Two Column Content Body -->
+        <div class="controls-modal-body">
+          <!-- Left Column: Acquisition -->
+          <div class="controls-col controls-left-col">
+            <div class="section-title">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
+              <h3>Acquisition</h3>
+            </div>
+
+            <div class="acquisition-buttons">
+              <button id="controlStartBtn" class="acq-btn start-btn active" type="button">
+                <svg viewBox="0 0 24 24" class="acq-icon">
+                  <path d="M8 5v14l11-7z" fill="currentColor" />
+                </svg>
+                <span>Start</span>
+              </button>
+              <button id="controlFreezeBtn" class="acq-btn freeze-btn" type="button">
+                <svg viewBox="0 0 24 24" class="acq-icon-snowflake" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="2" x2="12" y2="22"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path
+                    d="M20 16.66l-3.5-2.02m0-5.28L20 7.34m-8 4.66l-3.5 2.02m0-5.28L12 7.34m4.5 4.66l-3.5-2.02m0 5.28L13 16.66m-4.5-4.66l3.5 2.02m0-5.28L8.5 7.34">
+                  </path>
+                </svg>
+                <span>Freeze</span>
+              </button>
+            </div>
+
+            <div class="slider-control-group">
+              <div class="slider-label-row">
+                <span class="slider-label">Voltage</span>
+                <div class="slider-value-container">
+                  <input id="voltageValueInput" class="slider-value-box" type="text" value="38" readonly />
+                  <span class="slider-unit">V</span>
+                </div>
+              </div>
+              <div class="slider-input-row">
+                <button id="voltageMinus" class="slider-btn" type="button">-</button>
+                <div class="slider-track-container">
+                  <input id="voltageSlider" type="range" min="0" max="100" value="38" class="range-slider" />
+                </div>
+                <button id="voltagePlus" class="slider-btn" type="button">+</button>
+              </div>
+            </div>
+
+            <div class="slider-control-group">
+              <div class="slider-label-row">
+                <span class="slider-label">Analog Gain</span>
+                <div class="slider-value-container">
+                  <input id="gainValueInput" class="slider-value-box" type="text" value="19" readonly />
+                  <span class="slider-unit">dB</span>
+                </div>
+              </div>
+              <div class="slider-input-row">
+                <button id="gainMinus" class="slider-btn" type="button">-</button>
+                <div class="slider-track-container">
+                  <input id="gainSlider" type="range" min="0" max="40" value="19" class="range-slider" />
+                </div>
+                <button id="gainPlus" class="slider-btn" type="button">+</button>
+              </div>
+            </div>
+
+            <!-- OpenSonics Stylized Logo -->
+            <div class="opensonics-logo-container">
+              <svg viewBox="0 0 200 60" width="160" height="48">
+                <text x="10" y="38" font-family="'Poppins', 'Inter', sans-serif" font-weight="700" font-size="28"
+                  fill="#1e3a8a">Open</text>
+                <text x="92" y="38" font-family="'Poppins', 'Inter', sans-serif" font-style="italic" font-weight="400"
+                  font-size="28" fill="#2563eb">sonics</text>
+                <path d="M85 24 C 95 18, 100 48, 115 42" stroke="#f59e0b" stroke-width="3" fill="none"
+                  stroke-linecap="round" />
+                <path d="M90 27 C 98 22, 102 45, 110 40" stroke="#3b82f6" stroke-width="2.5" fill="none"
+                  stroke-linecap="round" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Vertical Divider line -->
+          <div class="controls-vertical-divider"></div>
+
+          <!-- Right Column: Signal Controls -->
+          <div class="controls-col controls-right-col">
+            <div class="section-title">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+              <h3>Signal Controls</h3>
+            </div>
+
+            <!-- TGC toggle row -->
+            <div class="tgc-toggle-row">
+              <span class="tgc-label">TGC :</span>
+              <label class="switch-toggle">
+                <input type="checkbox" id="tgcToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <!-- Vertical TGC sliders -->
+            <div class="tgc-sliders-container" id="tgcSlidersContainer">
+              <!-- Slider 1 -->
+              <div class="tgc-vertical-slider-group">
+                <span class="tgc-val-label" id="tgcVal1">50</span>
+                <div class="tgc-slider-wrapper">
+                  <input type="range" min="0" max="100" value="50" class="tgc-range-slider" orient="vertical"
+                    id="tgcSlider1" />
+                </div>
+              </div>
+              <!-- Slider 2 -->
+              <div class="tgc-vertical-slider-group">
+                <span class="tgc-val-label" id="tgcVal2">12</span>
+                <div class="tgc-slider-wrapper">
+                  <input type="range" min="0" max="100" value="12" class="tgc-range-slider" orient="vertical"
+                    id="tgcSlider2" />
+                </div>
+              </div>
+              <!-- Slider 3 -->
+              <div class="tgc-vertical-slider-group">
+                <span class="tgc-val-label" id="tgcVal3">3</span>
+                <div class="tgc-slider-wrapper">
+                  <input type="range" min="0" max="100" value="3" class="tgc-range-slider" orient="vertical"
+                    id="tgcSlider3" />
+                </div>
+              </div>
+              <!-- Slider 4 -->
+              <div class="tgc-vertical-slider-group">
+                <span class="tgc-val-label" id="tgcVal4">77</span>
+                <div class="tgc-slider-wrapper">
+                  <input type="range" min="0" max="100" value="77" class="tgc-range-slider" orient="vertical"
+                    id="tgcSlider4" />
+                </div>
+              </div>
+              <!-- Slider 5 -->
+              <div class="tgc-vertical-slider-group">
+                <span class="tgc-val-label" id="tgcVal5">90</span>
+                <div class="tgc-slider-wrapper">
+                  <input type="range" min="0" max="100" value="90" class="tgc-range-slider" orient="vertical"
+                    id="tgcSlider5" />
+                </div>
+              </div>
+              <!-- Slider 6 -->
+              <div class="tgc-vertical-slider-group">
+                <span class="tgc-val-label" id="tgcVal6">30</span>
+                <div class="tgc-slider-wrapper">
+                  <input type="range" min="0" max="100" value="30" class="tgc-range-slider" orient="vertical"
+                    id="tgcSlider6" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Display Toggle Row -->
+            <div class="display-toggle-row">
+              <span class="display-label">Display :</span>
+              <label class="switch-toggle">
+                <input type="checkbox" id="displayToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <!-- Bottom Buttons Row -->
+            <div class="signal-buttons-row">
+              <button id="saveSetupBtn" class="sig-btn save-setup-btn" type="button">
+                <svg class="sig-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+                </svg>
+                <span>Save Setup</span>
+              </button>
+              <button id="advancedBtn" class="sig-btn advanced-btn" type="button">
+                <svg class="sig-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                <span>Advanced...</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="controls-modal-statusbar">
+          <div class="status-left">
+            <span>Status : </span>
+            <span id="controlStatusLabel" class="status-val stopped">STOPPED</span>
+          </div>
+          <div class="status-right">
+            <span>IPC : </span>
+            <span id="controlIpcLabel" class="status-val connected">CONNECTED</span>
+          </div>
         </div>
       </div>
     </div>

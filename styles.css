@@ -154,20 +154,21 @@ body::after {
   height: 100%;
 }
 
-.header-logo {
-  height: 84px;
-  width: auto;
-  object-fit: contain;
-  background: transparent;
-  border: none;
-  margin-left: 24px;
-  padding-left: 16px;
-  display: block;
-  transition: all 0.3s ease;
+.header-left {
+  position: relative;
 }
 
-.header-logo:hover {
-  opacity: 0.9;
+.header-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 0;
+  padding-left: 16px;
+  display: block;
+  pointer-events: none; /* Let pointer events go to the card */
+  z-index: 2;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
 @keyframes logo-float {
@@ -1873,4 +1874,958 @@ select {
     100% 100% !important;
   overflow: hidden !important;
   height: 100vh !important;
+}
+
+/* ==========================================================================
+   OPENSONICS CONTROL PANEL MODAL (Light themed UI replicating img2)
+   ========================================================================== */
+#controlsModal .controls-modal-content {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 680px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+#controlsModal.active .controls-modal-content {
+  transform: scale(1);
+}
+
+/* Header bar resembling typical desktop window frame */
+.controls-modal-header {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.controls-modal-logo-group {
+  display: flex;
+  align-items: center;
+}
+
+.controls-window-icon-wrapper {
+  display: flex;
+  gap: 4px;
+}
+
+/* Orange and blue vertical/oval capsules */
+.win-icon-capsule {
+  width: 8px;
+  height: 16px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.win-icon-orange {
+  background: #f59e0b;
+}
+
+.win-icon-blue {
+  background: #3b82f6;
+}
+
+.controls-modal-win-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.controls-win-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.controls-win-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.controls-win-btn.win-close:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* Modal Body */
+.controls-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  background: #ffffff;
+}
+
+.controls-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.controls-vertical-divider {
+  width: 1px;
+  background-color: #e2e8f0;
+  align-self: stretch;
+}
+
+/* Section Titles (Acquisition / Signal Controls) */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1.5px solid #e2e8f0;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.section-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.section-title h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+/* Acquisition Left Panel */
+.acquisition-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.acq-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+/* Start Button: Blue when active */
+.acq-btn.start-btn {
+  background: #f1f5f9;
+  color: #3b82f6;
+}
+
+.acq-btn.start-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #1d4ed8;
+}
+
+.acq-btn.start-btn.active:hover {
+  background: #1d4ed8;
+}
+
+.acq-btn.start-btn:not(.active):hover {
+  background: #e2e8f0;
+}
+
+/* Freeze Button: Active state is freezing */
+.acq-btn.freeze-btn {
+  background: #f1f5f9;
+  color: #4b5563;
+}
+
+.acq-btn.freeze-btn.active {
+  background: #e5e7eb;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+.acq-btn.freeze-btn.active:hover {
+  background: #d1d5db;
+}
+
+.acq-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.acq-icon-snowflake {
+  width: 16px;
+  height: 16px;
+}
+
+/* Slider Controls (Voltage / Analog Gain) */
+.slider-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.slider-value-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slider-value-box {
+  width: 48px;
+  padding: 4px 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: none;
+}
+
+.slider-unit {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  width: 20px;
+}
+
+.slider-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider-btn {
+  width: 28px;
+  height: 28px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  line-height: 1;
+}
+
+.slider-btn:hover {
+  background: #1d4ed8;
+}
+
+.slider-track-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Custom range sliders styling (horizontal) */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #2563eb;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.opensonics-logo-container {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Right Panel: Signal Controls */
+.tgc-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tgc-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* Custom CSS Switch Toggles */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .25s ease;
+  border-radius: 22px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .25s ease;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch-toggle input:checked+.switch-slider {
+  background-color: #3b82f6;
+}
+
+.switch-toggle input:checked+.switch-slider:before {
+  transform: translateX(22px);
+}
+
+/* Vertical TGC Sliders grid */
+.tgc-sliders-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 8px;
+  align-items: center;
+  min-height: 190px;
+  transition: opacity 0.3s ease;
+}
+
+.tgc-sliders-container.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tgc-vertical-slider-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.tgc-val-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  min-height: 15px;
+}
+
+.tgc-slider-wrapper {
+  height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CSS vertical slider input */
+.tgc-range-slider {
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  width: 12px;
+  height: 120px;
+  padding: 0;
+  background: #e2e8f0;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  border-radius: 6px;
+  outline: none;
+}
+
+.tgc-range-slider::-webkit-slider-runnable-track {
+  width: 12px;
+  border-radius: 6px;
+}
+
+.display-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: -2px;
+}
+
+.display-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* Save / Advanced buttons */
+.signal-buttons-row {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.sig-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.sig-btn-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.save-setup-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: 1px solid #1d4ed8;
+}
+
+.save-setup-btn:hover {
+  background: #1d4ed8;
+}
+
+.advanced-btn {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.advanced-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Status Bar at the bottom */
+.controls-modal-statusbar {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.status-val {
+  font-weight: 800;
+}
+
+.status-val.stopped {
+  color: #ef4444;
+}
+
+.status-val.running {
+  color: #10b981;
+}
+
+.status-val.connected {
+  color: #10b981;
+}
+
+/* Responsive adjustment for controls modal */
+@media (max-width: 680px) {
+  #controlsModal .controls-modal-content {
+    max-width: 95%;
+  }
+
+  .controls-modal-body {
+    flex-direction: column;
+    gap: 16px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .controls-vertical-divider {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   DASHBOARD HEADER LOGO CARD & FUTURISTIC ROBOTIC ANIMATIONS
+   ========================================================================== */
+
+/* Header Logo Card Container */
+.header-logo-card {
+  position: relative;
+  height: 84px;
+  width: 252px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+  margin-left: 24px;
+  
+  /* Initial state during boot sequence */
+  clip-path: inset(0 100% 0 0);
+  opacity: 0;
+}
+
+/* TORUS Robotic Machine Container in Header (Scaled down) */
+.robot-container {
+  position: absolute;
+  left: -70px;
+  top: 50%;
+  transform: translateY(-50%) translateX(0px);
+  z-index: 15;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Boot animation trigger class */
+.robot-container.active-boot {
+  animation: robot-boot-sequence 5.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Robotic Arm Segment Animations */
+.robot-container.active-boot .robot-arm-shoulder {
+  transform-origin: 60px 140px;
+  animation: arm-shoulder-move 5.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.robot-container.active-boot .robot-arm-elbow {
+  animation: arm-elbow-move 5.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.robot-container.active-boot .robot-arm-forearm {
+  transform-origin: 0px 0px;
+  animation: arm-forearm-move 5.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.robot-container.active-boot .robot-arm-wrist {
+  animation: arm-wrist-move 5.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.robot-container.active-boot .ultrasound-probe {
+  transform-origin: 0px -12px;
+  animation: probe-angle-move 5.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.robot-container.active-boot .probe-emitter-glow {
+  animation: emitter-glow-pulse 5.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.robot-container.active-boot .base-panel-glow {
+  animation: panel-glow-pulse 3s infinite alternate;
+}
+
+.robot-container.active-boot .base-panel-sine {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: sine-wave-dash 2s linear infinite;
+}
+
+/* Robot Keyframes */
+@keyframes robot-boot-sequence {
+  /* 0s - 1.2s: Slide-in and fade-in */
+  0% {
+    transform: translateY(-50%) translateX(0px);
+    opacity: 0;
+  }
+  22% {
+    transform: translateY(-50%) translateX(55px); /* Position adjacent to logo card */
+    opacity: 1;
+  }
+  /* 1.2s - 4.2s: Active scanning state (remain in position) */
+  76% {
+    transform: translateY(-50%) translateX(55px);
+    opacity: 1;
+  }
+  /* 4.2s - 5.2s: Slide back and fade-out */
+  100% {
+    transform: translateY(-50%) translateX(10px);
+    opacity: 0;
+  }
+}
+
+/* Joint Keyframes */
+@keyframes arm-shoulder-move {
+  0% { transform: rotate(-25deg); }
+  22% { transform: rotate(-25deg); } 
+  35% { transform: rotate(15deg); }  /* Extend arm forward */
+  76% { transform: rotate(15deg); }  
+  88% { transform: rotate(-25deg); } /* Retract */
+  100% { transform: rotate(-25deg); }
+}
+
+@keyframes arm-elbow-move {
+  0% { transform: translate(60px, 80px) rotate(45deg); }
+  22% { transform: translate(60px, 80px) rotate(45deg); }
+  35% { transform: translate(60px, 80px) rotate(-15deg); } /* Straighten elbow */
+  76% { transform: translate(60px, 80px) rotate(-15deg); }
+  88% { transform: translate(60px, 80px) rotate(45deg); }  
+  100% { transform: translate(60px, 80px) rotate(45deg); }
+}
+
+@keyframes arm-forearm-move {
+  0% { transform: rotate(-5deg); }
+  22% { transform: rotate(-5deg); }
+  35% { transform: rotate(-35deg); } /* Reach towards card */
+  76% { transform: rotate(-35deg); }
+  88% { transform: rotate(-5deg); }
+  100% { transform: rotate(-5deg); }
+}
+
+@keyframes arm-wrist-move {
+  0% { transform: translate(0px, -50px) rotate(20deg); }
+  22% { transform: translate(0px, -50px) rotate(20deg); }
+  35% { transform: translate(0px, -50px) rotate(70deg); } 
+  76% { transform: translate(0px, -50px) rotate(70deg); }
+  88% { transform: translate(0px, -50px) rotate(20deg); }
+  100% { transform: translate(0px, -50px) rotate(20deg); }
+}
+
+@keyframes probe-angle-move {
+  0% { transform: rotate(10deg); }
+  22% { transform: rotate(10deg); }
+  35% { transform: rotate(35deg); } 
+  76% { transform: rotate(35deg); }
+  88% { transform: rotate(10deg); }
+  100% { transform: rotate(10deg); }
+}
+
+@keyframes emitter-glow-pulse {
+  0% { opacity: 0; }
+  32% { opacity: 0; }
+  35% { opacity: 0.9; fill: #00f0ff; filter: drop-shadow(0 0 4px #00f0ff); } 
+  76% { opacity: 0.9; fill: #00f0ff; filter: drop-shadow(0 0 6px #00f0ff); }
+  82% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes panel-glow-pulse {
+  0% { box-shadow: inset 0 0 3px #00f0ff; border-color: #00f0ff; }
+  100% { box-shadow: inset 0 0 10px #00f0ff, 0 0 5px rgba(0,240,255,0.4); border-color: #38bdf8; }
+}
+
+@keyframes sine-wave-dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Laser Scan Beam Overlay */
+.scan-beam {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 4px;
+  background: linear-gradient(to bottom, transparent, #00f0ff 15%, #38bdf8 50%, #00f0ff 85%, transparent);
+  box-shadow: 0 0 12px #00f0ff, 0 0 25px rgba(0, 240, 255, 0.8), 0 0 40px rgba(56, 189, 248, 0.4);
+  z-index: 12;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Booting state scan motion class (triggered by script, plays once) */
+.header-logo-card.booting .scan-beam {
+  animation: scan-beam-sweep 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 2.2s; /* Starts right as arm finishes extension */
+}
+
+@keyframes scan-beam-sweep {
+  0% {
+    left: -2px;
+    opacity: 0;
+  }
+  5% {
+    left: -2px;
+    opacity: 1;
+  }
+  95% {
+    left: calc(100% + 2px);
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% + 2px);
+    opacity: 0;
+  }
+}
+
+/* Booting Materialization */
+.header-logo-card.booting {
+  animation: materialize-logo 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 2.2s; /* Synchronized with scan sweep */
+}
+
+@keyframes materialize-logo {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.7)) brightness(1.8);
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.7)) brightness(1.8);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    filter: drop-shadow(0 0 0 transparent) brightness(1);
+  }
+}
+
+/* Post-Boot Active Micro-Animations Class */
+.header-logo-card.boot-complete {
+  clip-path: inset(0 0 0 0) !important;
+  opacity: 1 !important;
+  animation: card-breath-glow 6s ease-in-out infinite;
+}
+
+/* Hover glow effect (only when boot complete) */
+.header-logo-card.boot-complete:hover {
+  animation: none; /* Pause breathing glow */
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.12),
+    0 0 20px rgba(37, 99, 235, 0.2),
+    0 0 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Click feedback override (only when boot complete) */
+.header-logo-card.boot-complete.card-clicked {
+  transform: scale(1.03) !important;
+  box-shadow: 
+    0 12px 30px rgba(37, 99, 235, 0.3),
+    0 0 20px rgba(139, 92, 246, 0.25) !important;
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.15s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* Slow animated gradient border using CSS mask composite (activated when boot complete) */
+.header-logo-card.boot-complete::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1.5px; /* Border thickness */
+  background: linear-gradient(90deg, #2563eb, #00c8ff, #8b5cf6, #2563eb);
+  background-size: 300% 100%;
+  -webkit-mask: 
+     linear-gradient(#fff 0 0) content-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  animation: gradient-border-slide 6s linear infinite;
+  z-index: 10;
+}
+
+@keyframes gradient-border-slide {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 300% 0%;
+  }
+}
+
+/* Breathing glow animation keyframes */
+@keyframes card-breath-glow {
+  0%, 100% {
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.08),
+      0 0 8px rgba(37, 99, 235, 0.03);
+  }
+  50% {
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.08),
+      0 0 15px rgba(139, 92, 246, 0.1);
+  }
+}
+
+/* Apple/Tesla website-style diagonal shine sweep animation (activated when boot complete) */
+.header-logo-card.boot-complete .logo-card-shine {
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 4;
+  animation: shine-sweep 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Glass reflection specular highlights (activated when boot complete) */
+.header-logo-card.boot-complete .logo-card-glass-specular {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.02) 30%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.02) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  pointer-events: none;
+  z-index: 3;
+  animation: glass-specular-move 12s ease-in-out infinite;
+}
+
+/* Vertical Divider line pulse overlays (activated when boot complete) */
+.header-logo-card.boot-complete .logo-divider {
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  pointer-events: none;
+  z-index: 3;
+  animation: divider-pulse 5s ease-in-out infinite;
+}
+
+/* Professional tooltips */
+.header-logo-card .logo-tooltip {
+  position: absolute;
+  top: calc(100% + 12px); /* Displays below the header logo card since it is at the very top of the viewport */
+  bottom: auto;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: #fff;
+  width: max-content;
+  max-width: 320px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 100;
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.5), 
+    0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+/* Tooltip arrow pointing UP */
+.header-logo-card .logo-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  top: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent rgba(15, 23, 42, 0.95) transparent;
+}
+
+/* Hover reveal (only when boot complete) */
+.header-logo-card.boot-complete:hover .logo-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Material Design Ripple Effect */
+.header-logo-card .ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.28);
+  transform: scale(0);
+  animation: ripple-animation 0.6s cubic-bezier(0.1, 0.8, 0.3, 1);
+  pointer-events: none;
+  z-index: 5;
 }

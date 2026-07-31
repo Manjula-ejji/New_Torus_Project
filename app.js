@@ -1448,6 +1448,184 @@ settingsModal.addEventListener("click", (e) => {
   }
 });
 
+// Controls Modal (OpenSonics) UI Interaction
+const controlsModal = document.getElementById("controlsModal");
+const controlsBtn = document.getElementById("controlsBtn");
+const closeControlsBtn = document.getElementById("closeControlsBtn");
+const minimizeControlsBtn = document.getElementById("minimizeControlsBtn");
+
+function openControls() {
+  controlsModal.classList.add("active");
+}
+
+function closeControls() {
+  controlsModal.classList.remove("active");
+}
+
+if (controlsBtn) controlsBtn.addEventListener("click", openControls);
+if (closeControlsBtn) closeControlsBtn.addEventListener("click", closeControls);
+if (minimizeControlsBtn) minimizeControlsBtn.addEventListener("click", closeControls);
+
+if (controlsModal) {
+  controlsModal.addEventListener("click", (e) => {
+    if (e.target === controlsModal) {
+      closeControls();
+    }
+  });
+}
+
+// Acquisition controls (Start / Freeze)
+const controlStartBtn = document.getElementById("controlStartBtn");
+const controlFreezeBtn = document.getElementById("controlFreezeBtn");
+const controlStatusLabel = document.getElementById("controlStatusLabel");
+
+if (controlStartBtn && controlFreezeBtn && controlStatusLabel) {
+  controlStartBtn.addEventListener("click", () => {
+    controlStartBtn.classList.add("active");
+    controlFreezeBtn.classList.remove("active");
+    controlStatusLabel.textContent = "RUNNING";
+    controlStatusLabel.className = "status-val running";
+  });
+
+  controlFreezeBtn.addEventListener("click", () => {
+    controlFreezeBtn.classList.add("active");
+    controlStartBtn.classList.remove("active");
+    controlStatusLabel.textContent = "STOPPED";
+    controlStatusLabel.className = "status-val stopped";
+  });
+}
+
+// Voltage Slider Interaction
+const voltageSlider = document.getElementById("voltageSlider");
+const voltageValueInput = document.getElementById("voltageValueInput");
+const voltageMinus = document.getElementById("voltageMinus");
+const voltagePlus = document.getElementById("voltagePlus");
+
+function updateSliderBackground(slider) {
+  if (!slider) return;
+  const min = parseFloat(slider.min) || 0;
+  const max = parseFloat(slider.max) || 100;
+  const val = parseFloat(slider.value) || 0;
+  const percent = ((val - min) / (max - min)) * 100;
+  if (slider.classList.contains("tgc-range-slider")) {
+    slider.style.background = `linear-gradient(to top, #2563eb ${percent}%, #e2e8f0 ${percent}%)`;
+  } else {
+    slider.style.background = `linear-gradient(to right, #2563eb ${percent}%, #e2e8f0 ${percent}%)`;
+  }
+}
+
+if (voltageSlider && voltageValueInput) {
+  voltageSlider.addEventListener("input", () => {
+    voltageValueInput.value = voltageSlider.value;
+    updateSliderBackground(voltageSlider);
+  });
+
+  // Initial fill update
+  updateSliderBackground(voltageSlider);
+}
+
+if (voltageMinus && voltageSlider) {
+  voltageMinus.addEventListener("click", () => {
+    let val = parseInt(voltageSlider.value, 10);
+    if (val > parseInt(voltageSlider.min, 10)) {
+      voltageSlider.value = val - 1;
+      voltageSlider.dispatchEvent(new Event("input"));
+    }
+  });
+}
+
+if (voltagePlus && voltageSlider) {
+  voltagePlus.addEventListener("click", () => {
+    let val = parseInt(voltageSlider.value, 10);
+    if (val < parseInt(voltageSlider.max, 10)) {
+      voltageSlider.value = val + 1;
+      voltageSlider.dispatchEvent(new Event("input"));
+    }
+  });
+}
+
+// Analog Gain Slider Interaction
+const gainSlider = document.getElementById("gainSlider");
+const gainValueInput = document.getElementById("gainValueInput");
+const gainMinus = document.getElementById("gainMinus");
+const gainPlus = document.getElementById("gainPlus");
+
+if (gainSlider && gainValueInput) {
+  gainSlider.addEventListener("input", () => {
+    gainValueInput.value = gainSlider.value;
+    updateSliderBackground(gainSlider);
+  });
+
+  updateSliderBackground(gainSlider);
+}
+
+if (gainMinus && gainSlider) {
+  gainMinus.addEventListener("click", () => {
+    let val = parseInt(gainSlider.value, 10);
+    if (val > parseInt(gainSlider.min, 10)) {
+      gainSlider.value = val - 1;
+      gainSlider.dispatchEvent(new Event("input"));
+    }
+  });
+}
+
+if (gainPlus && gainSlider) {
+  gainPlus.addEventListener("click", () => {
+    let val = parseInt(gainSlider.value, 10);
+    if (val < parseInt(gainSlider.max, 10)) {
+      gainSlider.value = val + 1;
+      gainSlider.dispatchEvent(new Event("input"));
+    }
+  });
+}
+
+// TGC Slider Interaction
+const tgcToggle = document.getElementById("tgcToggle");
+const tgcSlidersContainer = document.getElementById("tgcSlidersContainer");
+
+if (tgcToggle && tgcSlidersContainer) {
+  tgcToggle.addEventListener("change", () => {
+    const sliders = tgcSlidersContainer.querySelectorAll(".tgc-range-slider");
+    if (tgcToggle.checked) {
+      tgcSlidersContainer.classList.remove("disabled");
+      sliders.forEach(s => s.disabled = false);
+    } else {
+      tgcSlidersContainer.classList.add("disabled");
+      sliders.forEach(s => s.disabled = true);
+    }
+  });
+}
+
+// Initialize TGC sliders behavior
+for (let i = 1; i <= 6; i++) {
+  const slider = document.getElementById(`tgcSlider${i}`);
+  const label = document.getElementById(`tgcVal${i}`);
+  if (slider && label) {
+    slider.addEventListener("input", () => {
+      label.textContent = slider.value;
+      updateSliderBackground(slider);
+    });
+    // Initial fill update
+    updateSliderBackground(slider);
+  }
+}
+
+// Save Setup & Advanced buttons action
+const saveSetupBtn = document.getElementById("saveSetupBtn");
+const advancedBtn = document.getElementById("advancedBtn");
+
+if (saveSetupBtn) {
+  saveSetupBtn.addEventListener("click", () => {
+    alert("OpenSonics Control Setup Saved successfully!");
+  });
+}
+
+if (advancedBtn) {
+  advancedBtn.addEventListener("click", () => {
+    alert("Opening Advanced Controls parameters dialog...");
+  });
+}
+
 // Role Selection screen card click handlers
 const roleCards = document.querySelectorAll(".role-card-item");
 const roleSelectionScreen = document.getElementById("role-selection-screen");
@@ -1467,6 +1645,11 @@ roleCards.forEach(card => {
     // Navigate from selection page to dashboard
     roleSelectionScreen.style.display = "none";
     appDashboard.style.display = "flex";
+
+    // Trigger header logo card boot sequence animation
+    if (typeof triggerHeaderBootSequence === "function") {
+      triggerHeaderBootSequence();
+    }
 
     // Push history state to enable back button navigation integration
     if (window.history && window.history.pushState) {
@@ -1656,6 +1839,9 @@ window.addEventListener("popstate", async (event) => {
     if (roleSelectionScreen && appDashboard) {
       roleSelectionScreen.style.display = "none";
       appDashboard.style.display = "flex";
+      if (typeof triggerHeaderBootSequence === "function") {
+        triggerHeaderBootSequence();
+      }
     }
   } else {
     // If currently in a call, trigger leaveCall to disconnect and clean up safely
@@ -2564,5 +2750,101 @@ function openPatientPopoutWindow() {
 
   patientPopoutWindow.addEventListener("unload", () => {
     patientPopoutWindow = null;
+  });
+}
+
+// PlebC TORUS Logo Card Boot Sequence & Interactive Enhancements
+let torusBootComplete = false;
+
+function triggerHeaderBootSequence() {
+  const card = document.querySelector(".header-logo-card");
+  const robotContainer = document.querySelector(".robot-container");
+  if (!card) return;
+
+  if (!torusBootComplete) {
+    // Clear any previous state and add booting class
+    card.classList.remove("boot-complete");
+    card.classList.add("booting");
+    
+    if (robotContainer) {
+      robotContainer.classList.add("active-boot");
+    }
+
+    setTimeout(() => {
+      card.classList.remove("booting");
+      card.classList.add("boot-complete");
+      if (robotContainer) {
+        robotContainer.remove();
+      }
+      torusBootComplete = true;
+      bindHeaderLogoCardInteractions(card);
+    }, 5200);
+  } else {
+    // Skip animation and activate immediately
+    card.classList.remove("booting");
+    card.classList.add("boot-complete");
+    if (robotContainer) {
+      robotContainer.remove();
+    }
+    bindHeaderLogoCardInteractions(card);
+  }
+}
+
+function bindHeaderLogoCardInteractions(card) {
+  if (!card) return;
+
+  // 3D Tilt Effect
+  card.addEventListener("mousemove", (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Percentage relative to center (-0.5 to 0.5)
+    const px = (x / rect.width) - 0.5;
+    const py = (y / rect.height) - 0.5;
+    
+    // Max tilt angle (degrees)
+    const maxTilt = 3.5;
+    const tiltY = px * maxTilt;
+    const tiltX = -py * maxTilt;
+    
+    card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+    card.style.transition = "transform 0.08s ease";
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+    card.style.transition = "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)";
+  });
+
+  // Material Ripple & Click scale bounce
+  card.addEventListener("click", function(e) {
+    // Create ripple span
+    const ripple = document.createElement("span");
+    ripple.classList.add("ripple-effect");
+    this.appendChild(ripple);
+
+    // Calculate dimensions
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+
+    // Trigger scale transition
+    this.classList.add("card-clicked");
+
+    // Cleanup ripple on animation finish
+    ripple.addEventListener("animationend", () => {
+      ripple.remove();
+    });
+
+    // Reset scale/glow classes
+    setTimeout(() => {
+      this.classList.remove("card-clicked");
+    }, 400);
   });
 }
