@@ -1877,6 +1877,17 @@ select {
 /* ==========================================================================
    OPENSONICS CONTROL PANEL MODAL (Light themed UI replicating img2)
    ========================================================================== */
+#controlsModal {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  pointer-events: none;
+}
+
+#controlsModal.active {
+  pointer-events: none;
+}
+
 #controlsModal .controls-modal-content {
   background: #ffffff;
   color: #334155;
@@ -1889,6 +1900,7 @@ select {
   transition: transform 0.3s ease;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 #controlsModal.active .controls-modal-content {
