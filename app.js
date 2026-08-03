@@ -60,6 +60,7 @@ roleInput.addEventListener("change", () => {
     uidInput.value = 6000 + Math.floor(Math.random() * 9000);
   }
   feedTypeContainer.style.display = selectedRole === "patient" ? "" : "none";
+  updateControlsButtonVisibility();
 });
 
 // Join Order Tracking & Sorting
@@ -1455,12 +1456,60 @@ const closeControlsBtn = document.getElementById("closeControlsBtn");
 const minimizeControlsBtn = document.getElementById("minimizeControlsBtn");
 
 function openControls() {
+  if (roleInput.value !== "doctor") {
+    console.warn("Unauthorized access attempt to Controls.");
+    return;
+  }
   controlsModal.classList.add("active");
+  const modalContent = controlsModal.querySelector(".controls-modal-content");
+  if (modalContent) {
+    modalContent.style.position = "";
+    modalContent.style.left = "";
+    modalContent.style.top = "";
+    modalContent.style.margin = "";
+  }
 }
 
 function closeControls() {
   controlsModal.classList.remove("active");
 }
+
+function updateControlsButtonVisibility() {
+  const localControlsBtn = document.getElementById("local-controls-btn");
+  const localControlsWrapper = document.querySelector("#local-card .video-controls");
+
+  if (roleInput.value === "doctor") {
+    if (!localControlsBtn && localControlsWrapper) {
+      const btn = document.createElement("button");
+      btn.className = "control-btn";
+      btn.id = "local-controls-btn";
+      btn.type = "button";
+      btn.title = "OpenSonics Control Panel";
+      btn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="2" y1="14" x2="6" y2="14"></line>
+          <line x1="10" y1="8" x2="14" y2="8"></line>
+          <line x1="18" y1="16" x2="22" y2="16"></line>
+        </svg>
+      `;
+      btn.addEventListener("click", openControls);
+      localControlsWrapper.appendChild(btn);
+    }
+  } else {
+    if (localControlsBtn) {
+      localControlsBtn.remove();
+    }
+  }
+}
+
+// Initialize button visibility
+updateControlsButtonVisibility();
 
 if (controlsBtn) controlsBtn.addEventListener("click", openControls);
 if (closeControlsBtn) closeControlsBtn.addEventListener("click", closeControls);
@@ -1472,6 +1521,96 @@ if (controlsModal) {
       closeControls();
     }
   });
+
+  // Make controls modal draggable by header
+  const header = controlsModal.querySelector(".controls-modal-header");
+  const modalContent = controlsModal.querySelector(".controls-modal-content");
+
+  if (header && modalContent) {
+    header.style.cursor = "grab";
+
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
+
+    function handleStart(e) {
+      // Don't drag if clicking buttons inside the header
+      if (e.target.closest(".controls-modal-win-controls") || e.target.closest("button")) {
+        return;
+      }
+
+      isDragging = true;
+      header.style.cursor = "grabbing";
+
+      // Prevent default text selection/drag behaviors
+      e.preventDefault();
+
+      const clientX = e.type.startsWith("touch") ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.startsWith("touch") ? e.touches[0].clientY : e.clientY;
+
+      startX = clientX;
+      startY = clientY;
+
+      // Get current offset relative to overlay
+      initialLeft = modalContent.offsetLeft;
+      initialTop = modalContent.offsetTop;
+
+      // Set position to absolute so it can be dragged relative to controlsModal (which is fixed/overlay)
+      modalContent.style.position = "absolute";
+      modalContent.style.margin = "0";
+      modalContent.style.left = `${initialLeft}px`;
+      modalContent.style.top = `${initialTop}px`;
+
+      // Disable text selection on body during drag
+      document.body.style.userSelect = "none";
+      document.body.style.webkitUserSelect = "none";
+    }
+
+    function handleMove(e) {
+      if (!isDragging) return;
+
+      const clientX = e.type.startsWith("touch") ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.startsWith("touch") ? e.touches[0].clientY : e.clientY;
+
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+
+      let newLeft = initialLeft + dx;
+      let newTop = initialTop + dy;
+
+      // Boundaries (keep completely inside viewport)
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const modalWidth = modalContent.offsetWidth;
+      const modalHeight = modalContent.offsetHeight;
+
+      newLeft = Math.max(0, Math.min(newLeft, viewportWidth - modalWidth));
+      newTop = Math.max(0, Math.min(newTop, viewportHeight - modalHeight));
+
+      modalContent.style.left = `${newLeft}px`;
+      modalContent.style.top = `${newTop}px`;
+    }
+
+    function handleEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      header.style.cursor = "grab";
+      document.body.style.userSelect = "";
+      document.body.style.webkitUserSelect = "";
+    }
+
+    // Mouse events
+    header.addEventListener("mousedown", handleStart);
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("mouseup", handleEnd);
+
+    // Touch events (for mobile/tablet support)
+    header.addEventListener("touchstart", handleStart, { passive: false });
+    document.addEventListener("touchmove", handleMove, { passive: false });
+    document.addEventListener("touchend", handleEnd);
+  }
 }
 
 // Acquisition controls (Start / Freeze)
