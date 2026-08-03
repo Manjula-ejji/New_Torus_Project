@@ -55,56 +55,61 @@
       <div class="header-left">
         <!-- Robotic Machine Overlay -->
         <div class="robot-container">
-          <svg class="torus-robotic-machine" viewBox="0 0 200 220" width="70" height="77" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="torus-robotic-machine" viewBox="0 0 200 220" width="70" height="77" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
             <!-- Sleek Base Shadow -->
             <ellipse cx="60" cy="205" rx="35" ry="6" fill="rgba(0, 240, 255, 0.15)" filter="blur(3px)" />
             <!-- Robotic Base (Mobile Cart) -->
             <g class="robot-base">
               <!-- Dark metal body panels -->
-              <rect x="25" y="145" width="70" height="50" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
+              <rect x="25" y="145" width="70" height="50" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="2" />
               <!-- Glowing blue stripe/panel -->
-              <rect x="35" y="157" width="50" height="14" rx="4" fill="rgba(15, 23, 42, 0.9)" stroke="#00f0ff" stroke-width="1.5" class="base-panel-glow"/>
+              <rect x="35" y="157" width="50" height="14" rx="4" fill="rgba(15, 23, 42, 0.9)" stroke="#00f0ff"
+                stroke-width="1.5" class="base-panel-glow" />
               <!-- Tech detail inside panel -->
-              <path d="M40 164 L50 160 L60 168 L70 164 L80 164" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="base-panel-sine"/>
+              <path d="M40 164 L50 160 L60 168 L70 164 L80 164" stroke="#38bdf8" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round" class="base-panel-sine" />
               <!-- Dark wheels -->
-              <circle cx="40" cy="200" r="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
-              <circle cx="40" cy="200" r="3" fill="#00f0ff"/>
-              <circle cx="80" cy="200" r="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
-              <circle cx="80" cy="200" r="3" fill="#00f0ff"/>
+              <circle cx="40" cy="200" r="8" fill="#1e293b" stroke="#475569" stroke-width="2" />
+              <circle cx="40" cy="200" r="3" fill="#00f0ff" />
+              <circle cx="80" cy="200" r="8" fill="#1e293b" stroke="#475569" stroke-width="2" />
+              <circle cx="80" cy="200" r="3" fill="#00f0ff" />
             </g>
             <!-- Robotic Arm Structure -->
             <!-- Base Joint (Shoulder) -->
-            <circle cx="60" cy="140" r="9" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
-            <circle cx="60" cy="140" r="4" fill="#38bdf8"/>
-            
+            <circle cx="60" cy="140" r="9" fill="#1e293b" stroke="#00f0ff" stroke-width="2" />
+            <circle cx="60" cy="140" r="4" fill="#38bdf8" />
+
             <!-- Shoulder Linkage (rotates) -->
             <g class="robot-arm-shoulder">
               <!-- Lower arm segment -->
-              <rect x="56" y="80" width="8" height="60" rx="4" fill="#334155" stroke="#475569" stroke-width="1.5" transform="rotate(-15 60 140)"/>
-              <line x1="60" y1="85" x2="60" y2="135" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2"/>
-              
+              <rect x="56" y="80" width="8" height="60" rx="4" fill="#334155" stroke="#475569" stroke-width="1.5"
+                transform="rotate(-15 60 140)" />
+              <line x1="60" y1="85" x2="60" y2="135" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2" />
+
               <!-- Elbow Joint -->
               <g class="robot-arm-elbow" transform="translate(60, 80)">
-                <circle cx="0" cy="0" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
-                <circle cx="0" cy="0" r="3" fill="#38bdf8"/>
-                
+                <circle cx="0" cy="0" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2" />
+                <circle cx="0" cy="0" r="3" fill="#38bdf8" />
+
                 <!-- Upper arm segment (rotates) -->
                 <g class="robot-arm-forearm">
-                  <rect x="-4" y="-50" width="8" height="50" rx="4" fill="#475569" stroke="#64748b" stroke-width="1.5"/>
-                  <line x1="0" y1="-5" x2="0" y2="-45" stroke="#00f0ff" stroke-width="1" stroke-dasharray="2,2"/>
-                  
+                  <rect x="-4" y="-50" width="8" height="50" rx="4" fill="#475569" stroke="#64748b"
+                    stroke-width="1.5" />
+                  <line x1="0" y1="-5" x2="0" y2="-45" stroke="#00f0ff" stroke-width="1" stroke-dasharray="2,2" />
+
                   <!-- Wrist Joint & Ultrasound Probe (rotates) -->
                   <g class="robot-arm-wrist" transform="translate(0, -50)">
-                    <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+                    <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
                     <!-- Linkage connector -->
-                    <path d="M-3 -5 L3 -5 L5 -12 L-5 -12 Z" fill="#334155"/>
+                    <path d="M-3 -5 L3 -5 L5 -12 L-5 -12 Z" fill="#334155" />
                     <!-- Probe structure -->
                     <g class="ultrasound-probe">
-                      <path d="M-8 -12 L8 -12 L6 -22 L-6 -22 Z" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5"/>
+                      <path d="M-8 -12 L8 -12 L6 -22 L-6 -22 Z" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5" />
                       <!-- Probe handle sensor strip -->
-                      <rect x="-2" y="-19" width="4" height="5" fill="#38bdf8"/>
+                      <rect x="-2" y="-19" width="4" height="5" fill="#38bdf8" />
                       <!-- Laser emitter plate -->
-                      <ellipse cx="0" cy="-22" rx="6" ry="2" fill="#00f0ff"/>
+                      <ellipse cx="0" cy="-22" rx="6" ry="2" fill="#00f0ff" />
                     </g>
                   </g>
                 </g>
@@ -122,12 +127,12 @@
           <!-- Divider line overlays -->
           <div class="logo-divider" style="left: 33.33%;"></div>
           <div class="logo-divider" style="left: 66.67%;"></div>
-          
+
           <img src="logo.png?v=2" alt="PlebC Logo" class="header-logo">
-          
+
           <!-- Laser Scan Beam overlay -->
           <div class="scan-beam"></div>
-          
+
           <!-- Tooltip overlay -->
           <div class="logo-tooltip">
             <div class="tooltip-line title">PlebC</div>
@@ -213,7 +218,7 @@
           <div class="controls-grid">
             <label>
               <span>App ID</span>
-              <input id="appId" type="text" placeholder="Enter Agora App ID" value="9a7e891874e247da886107161ac6d933" />
+              <input id="appId" type="text" placeholder="Enter Agora App ID" value="ff18cb4cd18e40678eba6d8c65fd3626" />
             </label>
 
             <label>
@@ -241,7 +246,7 @@
             <label>
               <span>Token (optional)</span>
               <input id="token" type="text" placeholder="RTC Token"
-                value="007eJxTYFgjL1Lwnbvy0ILizi62gPdSvxJydUpMSp/Ofh9wfnXrqX0KDKmWBoaGqUYmJhaWSSbmycmJFmbJhqZp5omJKUapqSYmi+1zshoCGRlW8vMxMzJAIIjPylCSX1RazMAAAINwIAU=" />
+                value="007eJxTYHj51vu+Yamp2dfYwu0fDzYuMJAWr99jeXmV6OSjxxvbfaYrMKSlGVokJ5kkpxhapJoYmJlbpCYlmqVYJJuZpqUYmxmZyakWZDUEMjLsOd3AzMgAgSA+K0NJflFpMQMDAOYuIVE=" />
             </label>
 
             <label>

@@ -163,7 +163,6 @@ body::after {
   height: 100%;
   object-fit: contain;
   padding: 0;
-  padding-left: 16px;
   display: block;
   pointer-events: none; /* Let pointer events go to the card */
   z-index: 2;
@@ -1229,7 +1228,6 @@ select {
   aspect-ratio: 3 / 1;
   object-fit: contain;
   padding: 0;
-  padding-left: 16px;
   display: block;
   animation: logo-float 8s ease-in-out infinite alternate;
   /* Very subtle floating animation */
