@@ -124,11 +124,15 @@
           <div class="logo-card-glass-specular"></div>
           <!-- Shine sweep overlay -->
           <div class="logo-card-shine"></div>
-          <!-- Divider line overlays -->
-          <div class="logo-divider" style="left: 33.33%;"></div>
-          <div class="logo-divider" style="left: 66.67%;"></div>
+          <!-- Inner wrapper for the logos and dividers to keep them centered at 252px -->
+          <div class="logo-content-wrapper"
+            style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <!-- Divider line overlays -->
+            <div class="logo-divider" style="left: 33.33%;"></div>
+            <div class="logo-divider" style="left: 66.67%;"></div>
 
-          <img src="logo.png?v=2" alt="PlebC Logo" class="header-logo">
+            <img src="logo.png?v=2" alt="PlebC Logo" class="header-logo">
+          </div>
 
           <!-- Laser Scan Beam overlay -->
           <div class="scan-beam"></div>
@@ -187,7 +191,7 @@
     <section class="controls">
       <div class="button-row">
         <button id="joinBtn" class="btn btn-primary" type="button">Join Call</button>
-        <button id="muteBtn" class="btn btn-mute" type="button" disabled>Mute Mic</button>
+        <button id="muteBtn" class="btn btn-mute" type="button">Mute Mic</button>
         <button id="leaveBtn" class="btn btn-secondary" type="button" disabled>Leave</button>
       </div>
     </section>

@@ -164,7 +164,8 @@ body::after {
   object-fit: contain;
   padding: 0;
   display: block;
-  pointer-events: none; /* Let pointer events go to the card */
+  pointer-events: none;
+  /* Let pointer events go to the card */
   z-index: 2;
   position: relative;
   transition: all 0.3s ease;
@@ -2440,8 +2441,8 @@ select {
 /* Header Logo Card Container */
 .header-logo-card {
   position: relative;
-  height: 84px;
-  width: 252px;
+  height: 96px;
+  width: 288px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -2456,7 +2457,7 @@ select {
   will-change: transform;
   transition: box-shadow 0.4s ease, transform 0.4s ease;
   margin-left: 24px;
-  
+
   /* Initial state during boot sequence */
   clip-path: inset(0 100% 0 0);
   opacity: 0;
@@ -2518,20 +2519,25 @@ select {
 
 /* Robot Keyframes */
 @keyframes robot-boot-sequence {
+
   /* 0s - 1.2s: Slide-in and fade-in */
   0% {
     transform: translateY(-50%) translateX(0px);
     opacity: 0;
   }
+
   22% {
-    transform: translateY(-50%) translateX(55px); /* Position adjacent to logo card */
+    transform: translateY(-50%) translateX(55px);
+    /* Position adjacent to logo card */
     opacity: 1;
   }
+
   /* 1.2s - 4.2s: Active scanning state (remain in position) */
   76% {
     transform: translateY(-50%) translateX(55px);
     opacity: 1;
   }
+
   /* 4.2s - 5.2s: Slide back and fade-out */
   100% {
     transform: translateY(-50%) translateX(10px);
@@ -2541,62 +2547,179 @@ select {
 
 /* Joint Keyframes */
 @keyframes arm-shoulder-move {
-  0% { transform: rotate(-25deg); }
-  22% { transform: rotate(-25deg); } 
-  35% { transform: rotate(15deg); }  /* Extend arm forward */
-  76% { transform: rotate(15deg); }  
-  88% { transform: rotate(-25deg); } /* Retract */
-  100% { transform: rotate(-25deg); }
+  0% {
+    transform: rotate(-25deg);
+  }
+
+  22% {
+    transform: rotate(-25deg);
+  }
+
+  35% {
+    transform: rotate(15deg);
+  }
+
+  /* Extend arm forward */
+  76% {
+    transform: rotate(15deg);
+  }
+
+  88% {
+    transform: rotate(-25deg);
+  }
+
+  /* Retract */
+  100% {
+    transform: rotate(-25deg);
+  }
 }
 
 @keyframes arm-elbow-move {
-  0% { transform: translate(60px, 80px) rotate(45deg); }
-  22% { transform: translate(60px, 80px) rotate(45deg); }
-  35% { transform: translate(60px, 80px) rotate(-15deg); } /* Straighten elbow */
-  76% { transform: translate(60px, 80px) rotate(-15deg); }
-  88% { transform: translate(60px, 80px) rotate(45deg); }  
-  100% { transform: translate(60px, 80px) rotate(45deg); }
+  0% {
+    transform: translate(60px, 80px) rotate(45deg);
+  }
+
+  22% {
+    transform: translate(60px, 80px) rotate(45deg);
+  }
+
+  35% {
+    transform: translate(60px, 80px) rotate(-15deg);
+  }
+
+  /* Straighten elbow */
+  76% {
+    transform: translate(60px, 80px) rotate(-15deg);
+  }
+
+  88% {
+    transform: translate(60px, 80px) rotate(45deg);
+  }
+
+  100% {
+    transform: translate(60px, 80px) rotate(45deg);
+  }
 }
 
 @keyframes arm-forearm-move {
-  0% { transform: rotate(-5deg); }
-  22% { transform: rotate(-5deg); }
-  35% { transform: rotate(-35deg); } /* Reach towards card */
-  76% { transform: rotate(-35deg); }
-  88% { transform: rotate(-5deg); }
-  100% { transform: rotate(-5deg); }
+  0% {
+    transform: rotate(-5deg);
+  }
+
+  22% {
+    transform: rotate(-5deg);
+  }
+
+  35% {
+    transform: rotate(-35deg);
+  }
+
+  /* Reach towards card */
+  76% {
+    transform: rotate(-35deg);
+  }
+
+  88% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(-5deg);
+  }
 }
 
 @keyframes arm-wrist-move {
-  0% { transform: translate(0px, -50px) rotate(20deg); }
-  22% { transform: translate(0px, -50px) rotate(20deg); }
-  35% { transform: translate(0px, -50px) rotate(70deg); } 
-  76% { transform: translate(0px, -50px) rotate(70deg); }
-  88% { transform: translate(0px, -50px) rotate(20deg); }
-  100% { transform: translate(0px, -50px) rotate(20deg); }
+  0% {
+    transform: translate(0px, -50px) rotate(20deg);
+  }
+
+  22% {
+    transform: translate(0px, -50px) rotate(20deg);
+  }
+
+  35% {
+    transform: translate(0px, -50px) rotate(70deg);
+  }
+
+  76% {
+    transform: translate(0px, -50px) rotate(70deg);
+  }
+
+  88% {
+    transform: translate(0px, -50px) rotate(20deg);
+  }
+
+  100% {
+    transform: translate(0px, -50px) rotate(20deg);
+  }
 }
 
 @keyframes probe-angle-move {
-  0% { transform: rotate(10deg); }
-  22% { transform: rotate(10deg); }
-  35% { transform: rotate(35deg); } 
-  76% { transform: rotate(35deg); }
-  88% { transform: rotate(10deg); }
-  100% { transform: rotate(10deg); }
+  0% {
+    transform: rotate(10deg);
+  }
+
+  22% {
+    transform: rotate(10deg);
+  }
+
+  35% {
+    transform: rotate(35deg);
+  }
+
+  76% {
+    transform: rotate(35deg);
+  }
+
+  88% {
+    transform: rotate(10deg);
+  }
+
+  100% {
+    transform: rotate(10deg);
+  }
 }
 
 @keyframes emitter-glow-pulse {
-  0% { opacity: 0; }
-  32% { opacity: 0; }
-  35% { opacity: 0.9; fill: #00f0ff; filter: drop-shadow(0 0 4px #00f0ff); } 
-  76% { opacity: 0.9; fill: #00f0ff; filter: drop-shadow(0 0 6px #00f0ff); }
-  82% { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+
+  32% {
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 0.9;
+    fill: #00f0ff;
+    filter: drop-shadow(0 0 4px #00f0ff);
+  }
+
+  76% {
+    opacity: 0.9;
+    fill: #00f0ff;
+    filter: drop-shadow(0 0 6px #00f0ff);
+  }
+
+  82% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes panel-glow-pulse {
-  0% { box-shadow: inset 0 0 3px #00f0ff; border-color: #00f0ff; }
-  100% { box-shadow: inset 0 0 10px #00f0ff, 0 0 5px rgba(0,240,255,0.4); border-color: #38bdf8; }
+  0% {
+    box-shadow: inset 0 0 3px #00f0ff;
+    border-color: #00f0ff;
+  }
+
+  100% {
+    box-shadow: inset 0 0 10px #00f0ff, 0 0 5px rgba(0, 240, 255, 0.4);
+    border-color: #38bdf8;
+  }
 }
 
 @keyframes sine-wave-dash {
@@ -2621,7 +2744,8 @@ select {
 /* Booting state scan motion class (triggered by script, plays once) */
 .header-logo-card.booting .scan-beam {
   animation: scan-beam-sweep 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 2.2s; /* Starts right as arm finishes extension */
+  animation-delay: 2.2s;
+  /* Starts right as arm finishes extension */
 }
 
 @keyframes scan-beam-sweep {
@@ -2629,14 +2753,17 @@ select {
     left: -2px;
     opacity: 0;
   }
+
   5% {
     left: -2px;
     opacity: 1;
   }
+
   95% {
     left: calc(100% + 2px);
     opacity: 1;
   }
+
   100% {
     left: calc(100% + 2px);
     opacity: 0;
@@ -2646,7 +2773,8 @@ select {
 /* Booting Materialization */
 .header-logo-card.booting {
   animation: materialize-logo 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: 2.2s; /* Synchronized with scan sweep */
+  animation-delay: 2.2s;
+  /* Synchronized with scan sweep */
 }
 
 @keyframes materialize-logo {
@@ -2655,12 +2783,15 @@ select {
     opacity: 0;
     filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.7)) brightness(1.8);
   }
+
   5% {
     opacity: 1;
   }
+
   95% {
     filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.7)) brightness(1.8);
   }
+
   100% {
     clip-path: inset(0 0 0 0);
     opacity: 1;
@@ -2677,8 +2808,9 @@ select {
 
 /* Hover glow effect (only when boot complete) */
 .header-logo-card.boot-complete:hover {
-  animation: none; /* Pause breathing glow */
-  box-shadow: 
+  animation: none;
+  /* Pause breathing glow */
+  box-shadow:
     0 10px 25px rgba(0, 0, 0, 0.12),
     0 0 20px rgba(37, 99, 235, 0.2),
     0 0 12px rgba(139, 92, 246, 0.15);
@@ -2687,7 +2819,7 @@ select {
 /* Click feedback override (only when boot complete) */
 .header-logo-card.boot-complete.card-clicked {
   transform: scale(1.03) !important;
-  box-shadow: 
+  box-shadow:
     0 12px 30px rgba(37, 99, 235, 0.3),
     0 0 20px rgba(139, 92, 246, 0.25) !important;
   transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.15s cubic-bezier(0.25, 1, 0.5, 1) !important;
@@ -2699,14 +2831,15 @@ select {
   position: absolute;
   inset: 0;
   border-radius: 12px;
-  padding: 1.5px; /* Border thickness */
+  padding: 1.5px;
+  /* Border thickness */
   background: linear-gradient(90deg, #2563eb, #00c8ff, #8b5cf6, #2563eb);
   background-size: 300% 100%;
-  -webkit-mask: 
-     linear-gradient(#fff 0 0) content-box, 
-     linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-          mask-composite: exclude;
+  mask-composite: exclude;
   pointer-events: none;
   animation: gradient-border-slide 6s linear infinite;
   z-index: 10;
@@ -2716,6 +2849,7 @@ select {
   0% {
     background-position: 0% 0%;
   }
+
   100% {
     background-position: 300% 0%;
   }
@@ -2723,13 +2857,16 @@ select {
 
 /* Breathing glow animation keyframes */
 @keyframes card-breath-glow {
-  0%, 100% {
-    box-shadow: 
+
+  0%,
+  100% {
+    box-shadow:
       0 4px 15px rgba(0, 0, 0, 0.08),
       0 0 8px rgba(37, 99, 235, 0.03);
   }
+
   50% {
-    box-shadow: 
+    box-shadow:
       0 4px 15px rgba(0, 0, 0, 0.08),
       0 0 15px rgba(139, 92, 246, 0.1);
   }
@@ -2742,12 +2879,10 @@ select {
   left: -150%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.45) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
   pointer-events: none;
   z-index: 4;
@@ -2758,14 +2893,12 @@ select {
 .header-logo-card.boot-complete .logo-card-glass-specular {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.02) 30%,
-    rgba(255, 255, 255, 0.14) 50%,
-    rgba(255, 255, 255, 0.02) 70%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(115deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.02) 30%,
+      rgba(255, 255, 255, 0.14) 50%,
+      rgba(255, 255, 255, 0.02) 70%,
+      rgba(255, 255, 255, 0) 100%);
   background-size: 200% 200%;
   background-position: 0% 0%;
   pointer-events: none;
@@ -2787,7 +2920,8 @@ select {
 /* Professional tooltips */
 .header-logo-card .logo-tooltip {
   position: absolute;
-  top: calc(100% + 12px); /* Displays below the header logo card since it is at the very top of the viewport */
+  top: calc(100% + 12px);
+  /* Displays below the header logo card since it is at the very top of the viewport */
   bottom: auto;
   left: 50%;
   transform: translateX(-50%) translateY(-8px);
@@ -2804,8 +2938,8 @@ select {
   pointer-events: none;
   transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   z-index: 100;
-  box-shadow: 
-    0 10px 25px -5px rgba(0, 0, 0, 0.5), 
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.5),
     0 8px 10px -6px rgba(0, 0, 0, 0.5);
   font-family: 'Inter', sans-serif;
   text-align: center;

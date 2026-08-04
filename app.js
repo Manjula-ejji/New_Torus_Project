@@ -29,6 +29,27 @@ const selfViewCamBtn = document.getElementById("self-view-cam-btn");
 const selfViewMicBtn = document.getElementById("self-view-mic-btn");
 const selfViewMinimizeBtn = document.getElementById("self-view-minimize-btn");
 
+// Initialize muteBtn and localMicBtn state on load
+const savedPatientMuted = localStorage.getItem("patient_mic_muted") === "true";
+if (savedPatientMuted) {
+  muteBtn.classList.add("muted");
+  muteBtn.textContent = "Unmute Mic";
+  if (localMicBtn) {
+    localMicBtn.classList.remove("active");
+    localMicBtn.classList.add("inactive");
+    localMicBtn.title = "Unmute Microphone";
+  }
+} else {
+  muteBtn.classList.remove("muted");
+  muteBtn.textContent = "Mute Mic";
+  if (localMicBtn) {
+    localMicBtn.classList.add("active");
+    localMicBtn.classList.remove("inactive");
+    localMicBtn.title = "Mute Microphone";
+  }
+}
+syncSelfViewControls();
+
 let client;
 let localTracks = {
   audioTrack: null,
@@ -578,8 +599,9 @@ localCameraBtn.addEventListener("click", async () => {
 
 // Central helper to synchronize local mic mute/unmute status with track, buttons, self-view, and localStorage/logs
 async function setLocalMicMuteState(muted) {
-  if (!localTracks.audioTrack) return;
-  await localTracks.audioTrack.setEnabled(!muted);
+  if (localTracks.audioTrack) {
+    await localTracks.audioTrack.setEnabled(!muted);
+  }
 
   if (muted) {
     localMicBtn.classList.remove("active");
@@ -610,14 +632,12 @@ async function setLocalMicMuteState(muted) {
 
 // Local Mic Button handler
 localMicBtn.addEventListener("click", async () => {
-  if (!localTracks.audioTrack) return;
   const isCurrentlyMuted = !localMicBtn.classList.contains("active");
   await setLocalMicMuteState(!isCurrentlyMuted);
 });
 
 // Microphone Mute Button handler (kept for compatibility)
 muteBtn.addEventListener("click", async () => {
-  if (!localTracks.audioTrack) return;
   const isCurrentlyMuted = muteBtn.classList.contains("muted");
   await setLocalMicMuteState(!isCurrentlyMuted);
 });
@@ -945,6 +965,7 @@ async function acquireLocalTracks(role, feedType) {
 }
 
 async function joinCall() {
+  const startMuted = muteBtn.classList.contains("muted");
   const appId = appIdInput.value.trim();
   const channel = channelInput.value.trim();
   const tokenText = tokenInput.value.trim();
@@ -1148,28 +1169,27 @@ async function joinCall() {
       publishTracks.push(audioTrack);
       muteBtn.disabled = false;
       localMicBtn.disabled = false;
-      if (role === "patient") {
-        const isMuted = localStorage.getItem("patient_mic_muted") === "true";
-        await audioTrack.setEnabled(!isMuted);
-        if (isMuted) {
-          localMicBtn.classList.remove("active");
-          localMicBtn.classList.add("inactive");
-          localMicBtn.title = "Unmute Microphone";
-          muteBtn.textContent = "Unmute Mic";
-          muteBtn.classList.add("muted");
-        } else {
-          localMicBtn.classList.add("active");
-          localMicBtn.classList.remove("inactive");
-          localMicBtn.title = "Mute Microphone";
-          muteBtn.textContent = "Mute Mic";
-          muteBtn.classList.remove("muted");
-        }
-        syncSelfViewControls();
+
+
+
+      if (startMuted) {
+        localMicBtn.classList.remove("active");
+        localMicBtn.classList.add("inactive");
+        localMicBtn.title = "Unmute Microphone";
+        muteBtn.textContent = "Unmute Mic";
+        muteBtn.classList.add("muted");
       } else {
-        localMicBtn.classList.remove("inactive");
         localMicBtn.classList.add("active");
+        localMicBtn.classList.remove("inactive");
         localMicBtn.title = "Mute Microphone";
+        muteBtn.textContent = "Mute Mic";
+        muteBtn.classList.remove("muted");
       }
+
+      if (role === "patient") {
+        localStorage.setItem("patient_mic_muted", startMuted ? "true" : "false");
+      }
+      syncSelfViewControls();
     } else {
       muteBtn.disabled = true;
       localMicBtn.disabled = true;
@@ -1236,6 +1256,9 @@ async function joinCall() {
 
     if (publishTracks.length > 0) {
       await client.publish(publishTracks);
+      if (startMuted && audioTrack) {
+        await audioTrack.setEnabled(false);
+      }
       if (role === "patient" && audioTrack) {
         console.log("Patient microphone published");
       }
@@ -1398,6 +1421,7 @@ async function leaveCall() {
     leaveBtn.disabled = true;
     localCameraBtn.disabled = true;
     localMicBtn.disabled = true;
+    muteBtn.disabled = false;
   }
 }
 
