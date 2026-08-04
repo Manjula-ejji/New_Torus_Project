@@ -1900,11 +1900,12 @@ select {
   transition: transform 0.3s ease;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow: hidden;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 #controlsModal.active .controls-modal-content {
   transform: scale(1);
+  pointer-events: auto;
 }
 
 /* Header bar resembling typical desktop window frame */
