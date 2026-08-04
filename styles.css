@@ -698,6 +698,7 @@ body::after {
   align-items: center;
   position: relative;
   z-index: 2;
+  gap: 20px;
 }
 
 .video-header h2 {
@@ -713,8 +714,9 @@ body::after {
 
 .video-controls {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 /* Premium Video Controls Buttons */
@@ -1656,6 +1658,7 @@ select {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   cursor: grab;
   user-select: none;
+  gap: 16px;
 }
 
 .self-view-header:active {
@@ -1672,8 +1675,9 @@ select {
 
 .self-view-controls {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 .self-view-btn {
